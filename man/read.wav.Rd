@@ -4,12 +4,14 @@
 \alias{read.wav}
 \title{read a WAV file}
 \usage{
-read.wav(filename, channel = c("left", "right"))
+read.wav(filename, channel = c("left", "right"), time.expansion.factor = 10)
 }
 \arguments{
 \item{filename}{The name of the file}
 
 \item{channel}{Select the left or the right channel}
+
+\item{time.expansion.factor}{The factor to which the original sound was slowed down prior to recording}
 }
 \description{
 read a WAV file

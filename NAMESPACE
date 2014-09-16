@@ -2,6 +2,9 @@
 
 export(next.power.2)
 export(read.wav)
+export(spectrogram.contour)
 export(wav.2.spectrogram)
+importFrom(raster,raster)
+importFrom(raster,rasterToContour)
 importFrom(signal,specgram)
 importFrom(tuneR,readWave)

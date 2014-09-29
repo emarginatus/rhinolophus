@@ -7,7 +7,7 @@
 next.power.2(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{the number of which to calculate the next power of 2}
 }
 \description{
 Calculate the next power of 2

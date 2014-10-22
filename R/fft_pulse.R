@@ -11,7 +11,7 @@ fft.pulse <- function(pulses, spectrogram, n.fourier = 30){
       bounding.box <- bbox(pulse)
       select.t <- which(bounding.box[1, 1] <= spectrogram$t * 1000 & spectrogram$t * 1000 <= bounding.box[1, 2])
       select.f <- which(bounding.box[2, 1] <= spectrogram$f / 1000 & spectrogram$f / 1000 <= bounding.box[2, 2])
-      selection <- spectrogram$S[select.f, select.t]
+      selection <- spectrogram$S[select.f, select.t, drop = FALSE]
       pulse.fft <- fft(selection)
       full <- matrix(0, ncol = n.fourier, nrow = n.fourier)
       select.dim <- pmin(n.fourier, dim(pulse.fft))

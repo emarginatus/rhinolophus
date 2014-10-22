@@ -28,12 +28,14 @@ find.pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
     xy <- rowColFromCell(selected.pulses, Which(selected.pulses == i, cells = TRUE))
     c(
       i,
-      nrow(xy),
       range(xy[, 2]),
-      range(xy[, 1])
+      range(xy[, 1]),
+      nrow(xy) / (diff(range(xy[, 1])) * diff(range(xy[, 2]))),
+      min.contour
     )
   }))
-  colnames(pulses) <- c("Pulse", "Cells", "Xmin", "Xmax", "Ymin", "Ymax")
+  colnames(pulses) <- c("Pulse", "Xmin", "Xmax", "Ymin", "Ymax", "Ratio", "Amplitude.Min")
   pulses <- as.data.frame(pulses)
+  pulses <- merge(pulses, recode[, c("Pulse", "Amplitude.max")])
   return(pulses)
 }

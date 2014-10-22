@@ -1,24 +1,39 @@
 #' Find the location of possible pulses in a spectrogram
 #' @export
-#' @importFrom zoo rollapply
+#' @importFrom raster raster
 #' @param spectrogram The spectrogram
-#' @param min.kHz Ignore spectogram data below this frequency
-#' @param local.peak.ms The time (in milliseconds) over which the current amplitude must be equal to the local maximum or minimum
-find.pulses <- function(spectrogram, min.kHz = 10, local.peak.ms = 10){
-  frequency <- spectrogram$f / 1000
-  max.amplitude <- apply(spectrogram$S[frequency > min.kHz, ], 2, max)
-  delta.t <- diff(spectrogram$t[1:2])
-  local.width <- ceiling(local.peak.ms * 1e-3 / delta.t)
-  local.max.amplitude <- rollapply(max.amplitude, width = local.width, FUN = max, fill = NA)
-  local.min.amplitude <- rollapply(max.amplitude, width = local.width, FUN = min, fill = NA)
-  which.high <- which(max.amplitude == local.max.amplitude)
-  which.low <- which(max.amplitude == local.min.amplitude)
-  which.high <- which.high[which.high > min(which.low)]
-  which.high <- which.high[which.high < max(which.low)]
-  sapply(which.high, function(i){
+#' @param min.contour The minimum amplitude of the pulse
+#' @param min.peak Take only contour into account with a maximum amplitude of at least min.peak
+find.pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
+  ### Fooling R CMD Check ###
+  value <- NULL
+  rm(value)
+  ### Fooling R CMD Check ###
+  spectrogram.raster <- raster(
+    spectrogram$S[rev(seq_len(nrow(spectrogram$S))), ],
+    xmn = min(spectrogram$t) * 1000,
+    xmx = max(spectrogram$t) * 1000,
+    ymn = min(spectrogram$f) / 1000,
+    ymx = max(spectrogram$f) / 1000
+  )
+  names(spectrogram.raster) <- "dB"
+
+  minimum.contour <- clump(spectrogram.raster >= min.contour, directions = 4)
+  local.max <- zonal(spectrogram.raster, minimum.contour, fun = max)
+  recode <- subset(as.data.frame(local.max), value >= min.peak)
+  colnames(recode)[2] <- "Amplitude.max"
+  recode$Pulse <- seq_len(nrow(recode))
+  selected.pulses <- subs(minimum.contour, recode, by = "zone", which = "Pulse")
+  pulses <- t(sapply(recode$Pulse, function(i){
+    xy <- rowColFromCell(selected.pulses, Which(selected.pulses == i, cells = TRUE))
     c(
-      max(which.low[which.low < i]),
-      min(which.low[i < which.low])
+      i,
+      nrow(xy),
+      range(xy[, 2]),
+      range(xy[, 1])
     )
-  })
+  }))
+  colnames(pulses) <- c("Pulse", "Cells", "Xmin", "Xmax", "Ymin", "Ymax")
+  pulses <- as.data.frame(pulses)
+  return(pulses)
 }

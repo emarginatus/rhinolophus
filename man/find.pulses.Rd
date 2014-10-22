@@ -4,14 +4,14 @@
 \alias{find.pulses}
 \title{Find the location of possible pulses in a spectrogram}
 \usage{
-find.pulses(spectrogram, min.kHz = 10, local.peak.ms = 10)
+find.pulses(spectrogram, min.contour = 10, min.peak = 20)
 }
 \arguments{
 \item{spectrogram}{The spectrogram}
 
-\item{min.kHz}{Ignore spectogram data below this frequency}
+\item{min.contour}{The minimum amplitude of the pulse}
 
-\item{local.peak.ms}{The time (in milliseconds) over which the current amplitude must be equal to the local maximum or minimum}
+\item{min.peak}{Take only contour into account with a maximum amplitude of at least min.peak}
 }
 \description{
 Find the location of possible pulses in a spectrogram

@@ -11,8 +11,9 @@ License: GPL-3
 Imports:
     tuneR,
     signal,
-    zoo,
     rgeos
 Depends:
     sp,
     raster
+Suggests:
+    igraph

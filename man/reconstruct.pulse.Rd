@@ -4,7 +4,7 @@
 \alias{reconstruct.pulse}
 \title{reconstruct a pulse}
 \usage{
-reconstruct.pulse(pulse.fft, local.time = TRUE, plot.it = TRUE)
+reconstruct.pulse(pulse.fft, local.time = TRUE, plot.it = TRUE, asp = 0.5)
 }
 \arguments{
 \item{pulse.fft}{The fourier representation of the pulse}
@@ -12,6 +12,8 @@ reconstruct.pulse(pulse.fft, local.time = TRUE, plot.it = TRUE)
 \item{local.time}{Should the pulse be centered (TRUE) or display the original timing (FALSE)}
 
 \item{plot.it}{Should the reconstructed pulse be plotted?}
+
+\item{asp}{The aspect ratio}
 }
 \description{
 reconstruct a pulse

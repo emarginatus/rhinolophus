@@ -11,7 +11,9 @@ License: GPL-3
 Imports:
     tuneR,
     signal,
-    rgeos
+    rgeos,
+    kohonen,
+    class
 Depends:
     sp,
     raster

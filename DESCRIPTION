@@ -12,9 +12,9 @@ Imports:
     tuneR,
     signal,
     rgeos,
-    kohonen,
     class
 Depends:
+    kohonen,
     sp,
     raster
 Suggests:

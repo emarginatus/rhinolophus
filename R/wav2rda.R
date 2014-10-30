@@ -37,7 +37,7 @@ wav2rda <- function(path, time.expansion.factor = 10, channel = "right", window.
       n.fourier = n.fourier
     )
     rm(pulses)
-    save(pulses.fft, file = gsub("(WAV|wav)$", "rda", filename))
+    save(pulses.fft, time.expansion.factor, channel, window.ms, min.contour, min.peak, n.fourier, file = gsub("(WAV|wav)$", "rda", filename))
     rm(pulses.fft)
     gc()
   }

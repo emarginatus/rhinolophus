@@ -9,5 +9,13 @@ ensemble.predict <- function(truth, pattern, newdata, n.ensemble = 10){
     model <- trainrda(pattern, truth)
     predict(model, newdata = newdata)$prediction
   })
-  Reduce("+", predictions) / n.ensemble
+  predictions <- Reduce("+", predictions) / n.ensemble
+  predictions <- cbind(
+    predictions,
+    "other:" = 1 - rowSums(predictions)
+  )
+  list(
+    predictions = predictions,
+    weights = trainrda(pattern, truth)$weights
+  )
 }

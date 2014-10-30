@@ -12,9 +12,12 @@ trainrda <- function(pattern, truth){
   Y <- Y[, colnames(Y) != "combinationsother:"]
   colnames(Y) <- names(types)[types >= 10]
   n.dim <- floor(log(nrow(truth)))
-  xyf(
-    pattern,
-    Y,
-    somgrid(n.dim, n.dim, "hexagonal")
+  list(
+    model = xyf(
+      pattern,
+      Y,
+      somgrid(n.dim, n.dim, "hexagonal")
+    ),
+    weights = 1 / table(truth$combinations)
   )
 }

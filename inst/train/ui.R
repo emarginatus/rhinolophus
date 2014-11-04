@@ -4,11 +4,8 @@ shinyUI(fluidPage(
     position = "right",
     sidebarPanel(
       actionButton("next.nosave", label = "Other pulse"),
-      numericInput(
-        "i",
-        label = "Pulse",
-        value = sample.pulse(predictions)
-      ),
+      actionButton("next.save", label = "Save pulse"),
+      uiOutput("i"),
       uiOutput("amplitude"),
       uiOutput("time"),
       uiOutput("frequency"),

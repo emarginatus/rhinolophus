@@ -58,30 +58,72 @@ predicted.species <- function(x){
 
 shinyServer(function(input, output, session) {
 
-  plotdata <- reactive({
-    prepareplot(pattern[input$i, ])
-  })
-
-  observe({
-    junk <- input$next.nosave
-    updateNumericInput(session, "i", value = sample.pulse(predictions))
-  })
-
-  output$amplitude <- renderUI({
-    sliderInput(
-      "amplitude",
-      label = "amplitude (rel dB)",
-      min = plotdata()$amplitude[1],
-      max = plotdata()$amplitude[4],
-      value = plotdata()$amplitude[2:3],
-      round = -1
+  output$i <- renderUI({
+    current.next.nosave <- input$next.nosave
+    current.next.save <- input$next.save
+    old.next.save <- get("next.save", envir = train.env)
+    prediction <- get("predictions", envir = train.env)
+    if(current.next.save > old.next.save){
+      to.do <- get("to.do", envir = train.env)
+      truth <- get("truth", envir = train.env)
+      truth$type[to.do[input$i]] <- input$types
+      truth$species[to.do[input$i]] <- input$species
+      predictions$predictions <- predictions$predictions[-input$i, ]
+      assign("predictions", predictions, envir = train.env)
+      assign("truth", truth, envir = train.env)
+      assign("to.do", to.do[-input$i], envir = train.env)
+      assign("next.save", input$next.save, envir = train.env)
+    }
+    numericInput(
+     "i",
+      label = "Pulse",
+      value = sample.pulse(predictions)
     )
   })
 
+  plotdata <- reactive({
+    if(is.null(input$i)){
+      NULL
+    } else {
+      to.do <- get("to.do", envir = train.env)
+      pattern <- get("pattern", envir = train.env)
+      prepareplot(pattern[to.do[input$i], ])
+    }
+  })
+
+
+  output$amplitude <- renderUI({
+    if(is.null(input$i)){
+      sliderInput(
+        "amplitude",
+        label = "amplitude (rel dB)",
+        min = 0,
+        max = 100,
+        value = c(0, 100),
+        round = -1
+      )
+    } else {
+      sliderInput(
+        "amplitude",
+        label = "amplitude (rel dB)",
+        min = pmin(0, floor(plotdata()$amplitude[1])),
+        max = ceiling(plotdata()$amplitude[4]),
+        value = plotdata()$amplitude[2:3],
+        round = -1
+      )
+    }
+  })
+
   output$time <- renderUI({
-    min.time <- plotdata()$time[1] * 1e3
-    max.time <- plotdata()$time[4] * 1e3
-    range.time <- plotdata()$time[2:3] * 1e3 + c(-50, 50)
+    if(is.null(input$i)){
+      min.time <- 0
+      max.time <- 1e3
+      range.time <- c(min.time, max.time)
+    } else {
+      min.time <- plotdata()$time[1] * 1e3
+      max.time <- plotdata()$time[4] * 1e3
+      range.time <- plotdata()$time[2:3] * 1e3 + c(-50, 50)
+    }
     range.time <- pmin(
       max.time,
       pmax(
@@ -93,7 +135,7 @@ shinyServer(function(input, output, session) {
       "time",
       label = "time (ms)",
       min = min.time,
-      max = max.time,
+      max = ceiling(max.time),
       value = range.time,
       round = 1,
       locale = "fr"
@@ -101,9 +143,15 @@ shinyServer(function(input, output, session) {
   })
 
   output$frequency <- renderUI({
-    min.freq <- plotdata()$frequency[1] * 1e-3
-    max.freq <- plotdata()$frequency[4] * 1e-3
-    range.freq <- plotdata()$frequency[2:3] * 1e-3 + c(-5, 5)
+    if(is.null(input$i)){
+      min.freq <- 0
+      max.freq <- 220
+      range.freq <- c(min.freq, max.freq)
+    } else {
+      min.freq <- plotdata()$frequency[1] * 1e-3
+      max.freq <- plotdata()$frequency[4] * 1e-3
+      range.freq <- plotdata()$frequency[2:3] * 1e-3 + c(-5, 5)
+    }
     range.freq <- pmin(
       pmax(range.freq, min.freq),
       max.freq
@@ -112,7 +160,7 @@ shinyServer(function(input, output, session) {
       "frequency",
       label = "frequency (kHz)",
       min = min.freq,
-      max = max.freq,
+      max = ceiling(max.freq),
       value = range.freq,
       round = -1,
       locale = "fr"
@@ -120,17 +168,33 @@ shinyServer(function(input, output, session) {
   })
 
   output$types <- renderUI({
+    prediction <- get("predictions", envir = train.env)
+    if(is.null(input$i)){
+      radioButtons(
+        "types", label = "type of sound",
+        choices = predicted.types(predictions$predictions[1, ])
+      )
+    } else {
       radioButtons(
         "types", label = "type of sound",
         choices = predicted.types(predictions$predictions[input$i, ])
       )
+    }
   })
 
   output$species <- renderUI({
+    prediction <- get("predictions", envir = train.env)
+    if(is.null(input$i)){
+      radioButtons(
+        "species", label = "species",
+        choices = predicted.species(predictions$predictions[1, ])
+      )
+    } else {
       radioButtons(
         "species", label = "species",
         choices = predicted.species(predictions$predictions[input$i, ])
       )
+    }
   })
 
   output$pulsePlot <- renderPlot(

@@ -6,6 +6,7 @@
 #' @param window.ms The size of the window for fourier transformation of the sound in milliseconds. The time-expansion factor is taken into account. Defaults to 1.
 #' @param min.contour The minimum amplitude to mark the start of a pulse. Expressed in dB above the median amplitude of the wav file.
 #' @param min.peak The required maximum amplitude of a pulse. Pulses with a maximum amplitude below min.peak will be ignored.
+#' @param n.fourier The number of parameters of the Fourier Transformation to store per dimension. Defaults to 30.
 wav2rda <- function(path, time.expansion.factor = 10, channel = "right", window.ms = 2, min.contour = 10, min.peak = 20, n.fourier = 30){
   filenames <- list.files(
     path = path,

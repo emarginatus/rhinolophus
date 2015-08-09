@@ -19,6 +19,8 @@ wav2rda(path, time.expansion.factor = 10, channel = "right",
 \item{min.contour}{The minimum amplitude to mark the start of a pulse. Expressed in dB above the median amplitude of the wav file.}
 
 \item{min.peak}{The required maximum amplitude of a pulse. Pulses with a maximum amplitude below min.peak will be ignored.}
+
+\item{n.fourier}{The number of parameters of the Fourier Transformation to store per dimension. Defaults to 30.}
 }
 \description{
 Find the pulses in a bunch of wav files and save them to rda files

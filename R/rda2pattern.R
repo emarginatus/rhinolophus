@@ -3,6 +3,11 @@
 #' @param path The path of the rda files
 #' @param n.part The number of fourier components to use. Defaults to 10
 rda2pattern <- function(path, n.part = 10){
+  ### Fooling R CMD check
+  pulses.fft <- NULL
+  rm(pulses.fft)
+  ### Fooling R CMD check
+
   filenames <- list.files(
     path = path,
     pattern = "\\.rda$",

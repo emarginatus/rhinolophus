@@ -2,6 +2,15 @@
 #' @export
 #' @param pattern A single pattern
 prepareplot <- function(pattern){
+  ### Fooling R CMD check
+  time.expansion.factor <- NULL
+  rm(time.expansion.factor)
+  channel <- NULL
+  rm(channel)
+  window.ms <- NULL
+  rm(window.ms)
+  ### Fooling R CMD check
+
   filename <- levels(pattern$filename)[pattern$filename]
   load(gsub("\\.WAV$", ".rda", filename))
   wav <- read.wav(

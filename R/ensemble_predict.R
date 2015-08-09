@@ -4,6 +4,7 @@
 #' @param pattern the patterns of the known classification
 #' @param newdata the pattern to get predictions for
 #' @param n.ensemble Number of kohonen SOM's to use
+#' @import kohonen
 ensemble.predict <- function(truth, pattern, newdata, n.ensemble = 10){
   predictions <- lapply(seq_len(n.ensemble), function(i){
     model <- trainrda(pattern, truth)

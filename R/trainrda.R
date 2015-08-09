@@ -1,6 +1,6 @@
 #' Train a Kohonen network
 #' @export
-#' @importFrom kohonen xyf
+#' @import kohonen
 #' @importFrom class somgrid
 #' @param pattern A matrix with patterns
 #' @param truth A data.frame with the truth

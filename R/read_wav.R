@@ -12,5 +12,11 @@ read.wav <- function(filename, channel = c("left", "right")){
   } else {
     selected.channel <- raw.data@right
   }
-  return(selected.channel)
+  return(
+    list(
+      sample.rate = header$sample.rate,
+      sample = header$samples,
+      values = selected.channel
+    )
+  )
 }

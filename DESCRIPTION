@@ -7,3 +7,4 @@ Author: Thierry Onkelinx
 Maintainer: Thierry Onkelinx <rhinolophus@muscardinus.be>
 Description: The package extracts bat sounds from wav files, calculated metrics on those pulses and tries to identify the species.
 License: GPL 3
+Imports: tuneR

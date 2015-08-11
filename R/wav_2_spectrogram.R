@@ -4,7 +4,7 @@
 #' @importFrom signal specgram
 #' @export
 wav.2.spectrogram <- function(wav, window.ms = 1){
-  window.n <- next.power.2(wav$sample.rate * window.ms / 1000)
+  window.n <- next_power_2(wav$sample.rate * window.ms / 1000)
   spectrogram <- specgram(
     x = wav$values,
     n = window.n,

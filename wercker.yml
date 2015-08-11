@@ -1,0 +1,5 @@
+box: rocker/hadleyverse
+build:
+    - jimhester/r-dependencies
+    - jimhester/r-check
+    - jimhester/r-coverage

@@ -5,7 +5,7 @@ build:
           name: installation of packages not covered by jimhester/r-dependencies
           code: |
             apt-get update -y
-            apt-get install -y r-cran-rgeos
+            apt-get install -y libgeos-dev
     - jimhester/r-dependencies
     - jimhester/r-check
     - jimhester/r-coverage

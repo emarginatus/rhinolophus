@@ -4,13 +4,13 @@
 \alias{wav2rda}
 \title{Find the pulses in a bunch of wav files and save them to rda files}
 \usage{
-wav2rda(path, time.expansion.factor = 10, channel = "right",
-  window.ms = 2, min.contour = 10, min.peak = 20, n.fourier = 30)
+wav2rda(path, te.factor = 10, channel = "right", window.ms = 2,
+  min.contour = 10, min.peak = 20, n.fourier = 30)
 }
 \arguments{
 \item{path}{the path of the wav files}
 
-\item{time.expansion.factor}{The time-expansion factor used in the wav files. Defaults to 10}
+\item{te.factor}{The time-expansion factor used in the wav files. Defaults to 10}
 
 \item{channel}{Which channel will be read. Defaults to "right"}
 

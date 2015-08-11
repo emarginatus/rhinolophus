@@ -3,8 +3,8 @@
 #' @param pattern A single pattern
 prepareplot <- function(pattern){
   ### Fooling R CMD check
-  time.expansion.factor <- NULL
-  rm(time.expansion.factor)
+  te.factor <- NULL
+  rm(te.factor)
   channel <- NULL
   rm(channel)
   window.ms <- NULL
@@ -13,9 +13,9 @@ prepareplot <- function(pattern){
 
   filename <- levels(pattern$filename)[pattern$filename]
   load(gsub("\\.WAV$", ".rda", filename))
-  wav <- read.wav(
+  wav <- read_wav(
     filename = filename,
-    time.expansion.factor = time.expansion.factor,
+    te.factor = te.factor,
     channel = channel
   )
   spectrogram <- wav.2.spectrogram(wav = wav, window.ms = window.ms)

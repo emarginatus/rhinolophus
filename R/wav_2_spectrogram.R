@@ -1,5 +1,5 @@
-#' Convert the output of read.wav to a spectrogram
-#' @param wav An object as created by \code{read.wav}
+#' Convert the output of read_wav to a spectrogram
+#' @param wav An object as created by \code{\link{read_wav}}
 #' @param window.ms The size of the window in microseconds. Default to 1.
 #' @importFrom signal specgram
 #' @export

@@ -2,16 +2,16 @@
 % Please edit documentation in R/wav_2_spectrogram.R
 \name{wav.2.spectrogram}
 \alias{wav.2.spectrogram}
-\title{Convert the output of read.wav to a spectrogram}
+\title{Convert the output of read_wav to a spectrogram}
 \usage{
 wav.2.spectrogram(wav, window.ms = 1)
 }
 \arguments{
-\item{wav}{An object as created by \code{read.wav}}
+\item{wav}{An object as created by \code{\link{read_wav}}}
 
 \item{window.ms}{The size of the window in microseconds. Default to 1.}
 }
 \description{
-Convert the output of read.wav to a spectrogram
+Convert the output of read_wav to a spectrogram
 }
 

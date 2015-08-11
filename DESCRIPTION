@@ -19,4 +19,5 @@ Depends:
     sp,
     raster
 Suggests:
+    testthat,
     igraph

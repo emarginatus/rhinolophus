@@ -14,6 +14,9 @@ read_wav <- function(
   channel <- match.arg(channel)
   assert_that(is.string(filename))
   assert_that(is.number(te.factor))
+  if (!file_test("-f", filename)) {
+    stop(filename, " does not exist")
+  }
 
   header <- readWave(filename, header = TRUE)
   raw.data <- readWave(filename)
@@ -25,7 +28,7 @@ read_wav <- function(
   return(
     list(
       sample.rate = header$sample.rate * te.factor,
-      sample = header$samples,
+      sample = as.integer(header$samples),
       values = selected.channel
     )
   )

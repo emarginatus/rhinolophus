@@ -16,3 +16,9 @@ expect_is(
 expect_identical(leislers$sample.rate, 441000)
 expect_identical(leislers$sample, 5065L)
 expect_identical(leislers$sample, length(leislers$values))
+
+expect_is(
+  leislers.right <- read_wav(filename = leislers.file, channel = "right"),
+  "list"
+)
+expect_identical(length(leislers.right$values), 0L)

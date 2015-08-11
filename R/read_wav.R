@@ -5,12 +5,16 @@
 #'    to recording
 #' @export
 #' @importFrom tuneR readWave
+#' @importFrom assertthat assert_that is.string is.number
 read_wav <- function(
   filename,
   channel = c("left", "right"),
   te.factor = 10
 ){
   channel <- match.arg(channel)
+  assert_that(is.string(filename))
+  assert_that(is.number(te.factor))
+
   header <- readWave(filename, header = TRUE)
   raw.data <- readWave(filename)
   if (channel == "left") {

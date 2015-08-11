@@ -12,6 +12,7 @@ Imports:
     tuneR,
     signal,
     rgeos,
+    assertthat,
     class
 Depends:
     kohonen,

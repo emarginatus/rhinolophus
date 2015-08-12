@@ -25,11 +25,11 @@ expect_error(
   "window.ms not greater than 0"
 )
 
-dir <- tempdir()
-file.copy(
-  from = system.file("demo_wav/leislers.wav", package = "rhinolophus"),
-  to = dir
+expect_is(
+  wav_2_spectrogram(
+    wav = read_wav(
+      system.file("demo_wav/leislers.wav", package = "rhinolophus")
+    )
+  ),
+  "specgram"
 )
-leislers.file <- paste(dir, "leislers.wav", sep = "/")
-spectrogram <- wav_2_spectrogram(wav = read_wav(leislers.file))
-expect_is(spectrogram, "specgram")

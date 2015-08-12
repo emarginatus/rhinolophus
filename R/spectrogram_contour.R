@@ -6,12 +6,19 @@
 #' @importFrom raster raster rasterToContour
 #' @importFrom sp coordinates Polygon Polygons SpatialPolygons
 #'    SpatialPolygonsDataFrame
+#' @importFrom assertthat assert_that
 #' @export
 spectrogram_contour <- function(spectrogram, contour.level = NULL){
+  assert_that(inherits(spectrogram, "specgram"))
+
   if (missing(contour.level)) {
     contour.level <- seq(0, ceiling(max(spectrogram$S)), by = 1)
   } else {
+    assert_that(is.numeric(contour.level))
+
     if (length(contour.level) == 1) {
+      assert_that(contour.level > 0)
+
       contour.level <- seq(
         0,
         contour.level * (max(spectrogram$S) %/% contour.level),

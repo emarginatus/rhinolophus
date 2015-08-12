@@ -24,3 +24,12 @@ expect_error(
   wav_2_spectrogram(list(sample.rate = 1, values = 1), window.ms = 0),
   "window.ms not greater than 0"
 )
+
+dir <- tempdir()
+file.copy(
+  from = system.file("demo_wav/leislers.wav", package = "rhinolophus"),
+  to = dir
+)
+leislers.file <- paste(dir, "leislers.wav", sep = "/")
+spectrogram <- wav_2_spectrogram(wav = read_wav(leislers.file))
+expect_is(spectrogram, "specgram")

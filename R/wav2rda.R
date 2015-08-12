@@ -22,7 +22,7 @@ wav2rda <- function(path, te.factor = 10, channel = "right", window.ms = 2, min.
       te.factor = te.factor,
       channel = channel
     )
-    spectrogram <- wav.2.spectrogram(
+    spectrogram <- wav_2_spectrogram(
       wav = wav,
       window.ms = window.ms
     )

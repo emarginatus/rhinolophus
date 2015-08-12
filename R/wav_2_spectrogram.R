@@ -1,9 +1,18 @@
 #' Convert the output of read_wav to a spectrogram
 #' @param wav An object as created by \code{\link{read_wav}}
 #' @param window.ms The size of the window in microseconds. Default to 1.
+#' @importFrom assertthat assert_that has_name is.number
 #' @importFrom signal specgram
 #' @export
 wav_2_spectrogram <- function(wav, window.ms = 1){
+  assert_that(is.list(wav))
+  assert_that(has_name(wav, "sample.rate"))
+  assert_that(has_name(wav, "values"))
+  assert_that(is.number(wav$sample.rate))
+  assert_that(is.numeric(wav$values))
+  assert_that(is.number(window.ms))
+  assert_that(window.ms > 0)
+
   window.n <- next_power_2(wav$sample.rate * window.ms / 1000)
   spectrogram <- specgram(
     x = wav$values,

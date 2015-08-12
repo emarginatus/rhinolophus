@@ -1,6 +1,6 @@
 #' Cluster contours into pulses
 #' @export
-#' @param contours A SpatialPolygonsDataFrame with contours. E.g. the output of \code{\link{spectrogram.contour}}
+#' @param contours A SpatialPolygonsDataFrame with contours. E.g. the output of \code{\link{spectrogram_contour}}
 #' @param min.peak the minimum height of the highest contour of a peak
 #' @importFrom rgeos gContains gWithin
 contour2pulse <- function(contours, min.peak = 20){

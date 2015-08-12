@@ -7,7 +7,7 @@
 contour2pulse(contours, min.peak = 20)
 }
 \arguments{
-\item{contours}{A SpatialPolygonsDataFrame with contours. E.g. the output of \code{\link{spectrogram.contour}}}
+\item{contours}{A SpatialPolygonsDataFrame with contours. E.g. the output of \code{\link{spectrogram_contour}}}
 
 \item{min.peak}{the minimum height of the highest contour of a peak}
 }

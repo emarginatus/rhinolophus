@@ -24,6 +24,10 @@ expect_is(
   spectrogram_contour(spectrogram),
   "SpatialPolygonsDataFrame"
 )
+expect_is(
+  spectrogram_contour(spectrogram, contour.level = 2),
+  "SpatialPolygonsDataFrame"
+)
 this.contour.level <- c(-2, 2)
 contours <- spectrogram_contour(spectrogram, contour.level = this.contour.level)
 expect_true(

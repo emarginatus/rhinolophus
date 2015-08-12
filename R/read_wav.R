@@ -6,6 +6,10 @@
 #' @export
 #' @importFrom tuneR readWave
 #' @importFrom assertthat assert_that is.string is.number
+#' @examples
+#'  wav = read_wav(
+#'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
+#'  )
 read_wav <- function(
   filename,
   channel = c("left", "right"),

@@ -4,6 +4,12 @@
 #' @importFrom assertthat assert_that has_name is.number
 #' @importFrom signal specgram
 #' @export
+#' @examples
+#'  wav_2_spectrogram(
+#'    wav = read_wav(
+#'      system.file("demo_wav/leislers.wav", package = "rhinolophus")
+#'    )
+#'  )
 wav_2_spectrogram <- function(wav, window.ms = 1){
   assert_that(is.list(wav))
   assert_that(has_name(wav, "sample.rate"))

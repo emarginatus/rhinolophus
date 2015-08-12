@@ -12,4 +12,9 @@ next_power_2(x)
 \description{
 Calculate the next power of 2
 }
+\examples{
+next_power_2(3)
+next_power_2(12345)
+next_power_2(c(7, 9))
+}
 

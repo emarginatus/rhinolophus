@@ -16,4 +16,11 @@ the step size in the vector.}
 \description{
 Calculate contour polygons from a spectrogram
 }
+\examples{
+wav <- read_wav(
+   system.file("demo_wav/leislers.wav", package = "rhinolophus")
+ )
+ spectrogram <- wav_2_spectrogram(wav)
+ spectrogram_contour(spectrogram)
+}
 

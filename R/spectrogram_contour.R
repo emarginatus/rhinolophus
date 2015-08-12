@@ -8,6 +8,12 @@
 #'    SpatialPolygonsDataFrame
 #' @importFrom assertthat assert_that
 #' @export
+#' @examples
+#'  wav <- read_wav(
+#'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
+#'  )
+#'  spectrogram <- wav_2_spectrogram(wav)
+#'  spectrogram_contour(spectrogram)
 spectrogram_contour <- function(spectrogram, contour.level = NULL){
   assert_that(inherits(spectrogram, "specgram"))
 

@@ -1,6 +1,7 @@
 #' Find the location of possible pulses in a spectrogram
 #' @export
 #' @importFrom raster raster Which rowColFromCell zonal clump subs
+#' @importFrom assertthat assert_that is.number
 #' @param spectrogram The spectrogram
 #' @param min.contour The minimum amplitude of the pulse
 #' @param min.peak Take only contour into account with a maximum amplitude of at least min.peak
@@ -16,6 +17,11 @@
 #'  spectrogram <- wav_2_spectrogram(wav)
 #'  find_pulses(spectrogram)
 find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
+  assert_that(is.number(min.contour))
+  assert_that(is.number(min.peak))
+  assert_that(min.peak > min.contour)
+  assert_that(inherits(spectrogram, "specgram"))
+
   spectrogram.raster <- raster(
     spectrogram$S[rev(seq_len(nrow(spectrogram$S))), ],
     xmn = min(spectrogram$t) * 1000,

@@ -16,4 +16,11 @@ find_pulses(spectrogram, min.contour = 10, min.peak = 20)
 \description{
 Find the location of possible pulses in a spectrogram
 }
+\examples{
+wav <- read_wav(
+   system.file("demo_wav/leislers.wav", package = "rhinolophus")
+ )
+ spectrogram <- wav_2_spectrogram(wav)
+ find_pulses(spectrogram)
+}
 

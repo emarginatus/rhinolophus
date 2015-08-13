@@ -9,6 +9,12 @@
   rm(value)
   ### Fooling R CMD Check ###
 
+#' @examples
+#'  wav <- read_wav(
+#'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
+#'  )
+#'  spectrogram <- wav_2_spectrogram(wav)
+#'  find_pulses(spectrogram)
 find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
   spectrogram.raster <- raster(
     spectrogram$S[rev(seq_len(nrow(spectrogram$S))), ],

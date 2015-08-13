@@ -3,7 +3,7 @@
 export(contour2pulse)
 export(ensemble.predict)
 export(fft.pulse)
-export(find.pulses)
+export(find_pulses)
 export(next_power_2)
 export(plotpattern)
 export(prepareplot)

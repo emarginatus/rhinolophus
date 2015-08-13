@@ -1,1 +1,1 @@
-exclude: c("readWave\\(")
+exclude: "[readWave|rowColFromCell|Which]\\("

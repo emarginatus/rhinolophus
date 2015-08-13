@@ -27,7 +27,7 @@ wav2rda <- function(path, te.factor = 10, channel = "right", window.ms = 2, min.
       window.ms = window.ms
     )
     rm(wav)
-    pulses <- find.pulses(
+    pulses <- find_pulses(
       spectrogram = spectrogram,
       min.contour = min.contour,
       min.peak = min.peak

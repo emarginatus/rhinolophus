@@ -24,6 +24,6 @@ prepareplot <- function(pattern){
     spectrogram = spectrogram,
     time = c(0, (pattern$start.time + c(0, pattern$puls.duration)) * 1e-3, tail(spectrogram$t, 1)),
     frequency = c(0, c(pattern$frequency.min, pattern$frequency.max) * 1e3, tail(spectrogram$f, 1)),
-    amplitude = c(0, pattern$amplitude.min, pattern$amplitude.max, max(spectrogram$S))
+    amplitude = c(0, pattern$AmplitudeMin, pattern$AmplitudeMax, max(spectrogram$S))
   )
 }

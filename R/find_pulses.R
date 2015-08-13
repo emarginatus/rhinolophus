@@ -2,14 +2,10 @@
 #' @export
 #' @importFrom raster raster Which rowColFromCell zonal clump subs
 #' @importFrom assertthat assert_that is.number
+#' @importFrom dplyr %>% filter_ rename_ mutate_ summarize_ select_ inner_join
 #' @param spectrogram The spectrogram
 #' @param min.contour The minimum amplitude of the pulse
 #' @param min.peak Take only contour into account with a maximum amplitude of at least min.peak
-  ### Fooling R CMD Check ###
-  value <- NULL
-  rm(value)
-  ### Fooling R CMD Check ###
-
 #' @examples
 #'  wav <- read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
@@ -33,27 +29,37 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
 
   minimum.contour <- clump(spectrogram.raster >= min.contour, directions = 4)
   local.max <- zonal(spectrogram.raster, minimum.contour, fun = max)
-  recode <- subset(as.data.frame(local.max), value >= min.peak)
-  colnames(recode)[2] <- "AmplitudeMax"
-  recode$Pulse <- seq_len(nrow(recode))
+  recode <- local.max %>%
+    as.data.frame() %>%
+    filter_(~ value >= min.peak) %>%
+    rename_(AmplitudeMax = ~value) %>%
+    mutate_(Pulse = ~seq_along(zone))
   selected.pulses <- subs(minimum.contour, recode, by = "zone", which = "Pulse")
-  pulses <- t(sapply(recode$Pulse, function(i){
-    xy <- rowColFromCell(
-      selected.pulses,
-      Which(selected.pulses == i, cells = TRUE)
+  pulses <- do.call(
+    rbind,
+    lapply(
+      recode$Pulse,
+      function(i){
+        xy <- rowColFromCell(
+          selected.pulses,
+          Which(selected.pulses == i, cells = TRUE)
+        )
+        xy %>%
+          as.data.frame() %>%
+          summarize_(
+            Pulse = i,
+            Xmin = ~min(col),
+            Xmax = ~max(col),
+            Ymin = ~min(row),
+            Ymax = ~max(row),
+            Ratio = ~n() / (diff(range(col)) * diff(range(row))),
+            AmplitudeMin = min.contour
+          )
+      }
     )
-    c(
-      i,
-      range(xy[, 2]),
-      range(xy[, 1]),
-      nrow(xy) / (diff(range(xy[, 1])) * diff(range(xy[, 2]))),
-      min.contour
-    )
-  }))
-  colnames(pulses) <- c(
-    "Pulse", "Xmin", "Xmax", "Ymin", "Ymax", "Ratio", "AmplitudeMin"
   )
-  pulses <- as.data.frame(pulses)
-  pulses <- merge(pulses, recode[, c("Pulse", "AmplitudeMax")])
+  pulses <- recode %>%
+    select_(~-zone) %>%
+    inner_join(x = pulses, by = "Pulse")
   return(pulses)
 }

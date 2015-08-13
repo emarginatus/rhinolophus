@@ -13,6 +13,7 @@ Imports:
     signal,
     rgeos,
     assertthat,
+    dplyr,
     class
 Depends:
     kohonen,

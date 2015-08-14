@@ -21,8 +21,8 @@ contour2pulse <- function(contours, min.peak = 20){
   assert_that(is.number(min.peak))
 
   pulses <- list()
-  while (max(contours$level) >= min.peak & length(contours) > 1) {
-    current.max <- which.max(contours$level)
+  current.max <- which.max(contours$level)
+  while (contours$level[current.max] >= min.peak & length(contours) > 1) {
     covers <- gContains(
       contours[-current.max, ],
       contours[current.max, ],
@@ -30,6 +30,7 @@ contour2pulse <- function(contours, min.peak = 20){
     )
     if (sum(covers) == 0) {
       contours <- contours[-current.max, ]
+      current.max <- which.max(contours$level)
       next
     }
     selection.topdown <- which(
@@ -43,9 +44,7 @@ contour2pulse <- function(contours, min.peak = 20){
     )
     pulses <- c(pulses, contours[selection.bottumup, ])
     contours <- contours[-selection.bottumup, ]
-    if (length(contours) == 0) {
-      break
-    }
+    current.max <- which.max(contours$level)
   }
   return(pulses)
 }

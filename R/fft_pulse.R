@@ -15,7 +15,10 @@ fft.pulse <- function(pulses, spectrogram, n.fourier = 30){
       pulse.fft <- fft(selection)
       full <- matrix(0, ncol = n.fourier, nrow = n.fourier)
       select.dim <- pmin(n.fourier, dim(pulse.fft))
-      full[seq_len(select.dim[1]), seq_len(select.dim[2])] <- pulse.fft[seq_len(select.dim[1]), seq_len(select.dim[2])]
+      full[seq_len(select.dim[1]), seq_len(select.dim[2])] <- pulse.fft[
+        seq_len(select.dim[1]),
+        seq_len(select.dim[2])
+      ]
       parameters <- c(
         pulse["Pulse"],
         spectrogram$t[pulse["Xmin"]] * 1e3,
@@ -25,7 +28,11 @@ fft.pulse <- function(pulses, spectrogram, n.fourier = 30){
         diff(spectrogram$f[1:2]) * 1e-3,
         pulse[c("Ratio", "AmplitudeMin", "AmplitudeMax")]
       )
-      names(parameters) <- c("pulse", "start.time", "puls.duration", "time.delta", "frequency.min", "frequency.max", "frequency.delta", "ratio", "AmplitudeMin", "AmplitudeMax")
+      names(parameters) <- c(
+        "Pulse", "StartTime", "PulsDuration", "TimeDelta", "FrequencyMin",
+        "FrequencyMax", "FrequencyDelta", "Ratio", "AmplitudeMin",
+        "AmplitudeMax"
+      )
       list(
         parameters = parameters,
         fft.dim = dim(selection),

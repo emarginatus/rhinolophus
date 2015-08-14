@@ -32,7 +32,7 @@ wav2rda <- function(path, te.factor = 10, channel = "right", window.ms = 2, min.
       min.contour = min.contour,
       min.peak = min.peak
     )
-    pulses.fft <- fft.pulse(
+    pulses.fft <- fft_pulse(
       pulses = pulses,
       spectrogram = spectrogram,
       n.fourier = n.fourier

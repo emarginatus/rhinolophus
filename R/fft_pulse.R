@@ -1,10 +1,16 @@
 #' Calculate the fast fourier transformation for each pulse
 #' @export
 #' @importFrom sp bbox
+#' @importFrom assertthat assert_that is.count
 #' @param pulses A list of pulses. E.g. the output of \code{\link{contour2pulse}}
 #' @param spectrogram The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}
 #' @param n.fourier The number of required Fourier components in each direction.
 fft.pulse <- function(pulses, spectrogram, n.fourier = 30){
+  assert_that(is.list(pulses))
+  assert_that(inherits(spectrogram, what = "specgram"))
+  assert_that(is.count(n.fourier))
+  assert_that(all(sapply(pulses, inherits, what = "SpatialPolygonsDataFrame")))
+
   apply(
     pulses,
     1,

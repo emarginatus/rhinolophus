@@ -15,6 +15,7 @@ contour2pulse(contours, min.peak = 20)
 Cluster contours into pulses
 }
 \examples{
+\dontrun{
 wav <- read_wav(
   system.file("demo_wav/leislers.wav", package = "rhinolophus")
 )
@@ -24,5 +25,6 @@ pulses <- contour2pulse(contours)
 plot(pulses[[1]], asp = 0.25)
 axis(1)
 axis(2)
+}
 }
 

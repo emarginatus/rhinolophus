@@ -5,6 +5,7 @@
 #' @importFrom rgeos gContains gWithin
 #' @importFrom assertthat assert_that is.number
 #' @examples
+#' \dontrun{
 #' wav <- read_wav(
 #'   system.file("demo_wav/leislers.wav", package = "rhinolophus")
 #' )
@@ -14,6 +15,7 @@
 #' plot(pulses[[1]], asp = 0.25)
 #' axis(1)
 #' axis(2)
+#' }
 contour2pulse <- function(contours, min.peak = 20){
   assert_that(inherits(contours, "SpatialPolygonsDataFrame"))
   assert_that(is.number(min.peak))
@@ -28,11 +30,7 @@ contour2pulse <- function(contours, min.peak = 20){
     )
     if (sum(covers) == 0) {
       contours <- contours[-current.max, ]
-      if (length(contours) == 0) {
-        break
-      } else {
-        next
-      }
+      next
     }
     selection.topdown <- which(
       rownames(contours@data) %in% colnames(covers)[covers]

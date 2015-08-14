@@ -2,7 +2,7 @@
 #' @export
 #' @importFrom sp bbox
 #' @param pulses A list of pulses. E.g. the output of \code{\link{contour2pulse}}
-#' @param spectrogram The spectrogram. E.g. the output of \code{\link{wav_2_spectrogram}}
+#' @param spectrogram The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}
 #' @param n.fourier The number of required Fourier components in each direction.
 fft.pulse <- function(pulses, spectrogram, n.fourier = 30){
   apply(

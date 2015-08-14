@@ -10,7 +10,7 @@
 #'  wav <- read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
 #'  )
-#'  spectrogram <- wav_2_spectrogram(wav)
+#'  spectrogram <- wav2spectrogram(wav)
 #'  find_pulses(spectrogram)
 find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
   assert_that(is.number(min.contour))

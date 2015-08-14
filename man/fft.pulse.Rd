@@ -9,7 +9,7 @@ fft.pulse(pulses, spectrogram, n.fourier = 30)
 \arguments{
 \item{pulses}{A list of pulses. E.g. the output of \code{\link{contour2pulse}}}
 
-\item{spectrogram}{The spectrogram. E.g. the output of \code{\link{wav_2_spectrogram}}}
+\item{spectrogram}{The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}}
 
 \item{n.fourier}{The number of required Fourier components in each direction.}
 }

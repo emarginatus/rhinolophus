@@ -18,7 +18,7 @@ prepareplot <- function(pattern){
     te.factor = te.factor,
     channel = channel
   )
-  spectrogram <- wav_2_spectrogram(wav = wav, window.ms = window.ms)
+  spectrogram <- wav2spectrogram(wav = wav, window.ms = window.ms)
   spectrogram$S[spectrogram$S < 1e-10] <- 1e-10
   list(
     spectrogram = spectrogram,

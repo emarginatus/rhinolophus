@@ -2,7 +2,7 @@ context("spectrogram_contour")
 wav <- read_wav(
   system.file("demo_wav/leislers.wav", package = "rhinolophus")
 )
-spectrogram <- wav_2_spectrogram(wav)
+spectrogram <- wav2spectrogram(wav)
 expect_error(
   spectrogram_contour("a"),
   "spectrogram does not inherit from class specgram"

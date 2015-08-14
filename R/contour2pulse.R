@@ -3,6 +3,7 @@
 #' @param contours A SpatialPolygonsDataFrame with contours. E.g. the output of \code{\link{spectrogram_contour}}
 #' @param min.peak the minimum height of the highest contour of a peak
 #' @importFrom rgeos gContains gWithin
+#' @importFrom assertthat assert_that is.number
 #' @examples
 #' wav <- read_wav(
 #'   system.file("demo_wav/leislers.wav", package = "rhinolophus")
@@ -14,6 +15,9 @@
 #' axis(1)
 #' axis(2)
 contour2pulse <- function(contours, min.peak = 20){
+  assert_that(inherits(contours, "SpatialPolygonsDataFrame"))
+  assert_that(is.number(min.peak))
+
   pulses <- list()
   while (max(contours$level) >= min.peak & length(contours) > 1) {
     current.max <- which.max(contours$level)

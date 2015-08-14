@@ -1,1 +1,1 @@
-exclude: "[readWave|rowColFromCell|Which]\\("
+exclude: "[readWave|rowColFromCell|Which|gContains|gWithin]\\("

@@ -5,24 +5,33 @@
 #' @importFrom rgeos gContains gWithin
 contour2pulse <- function(contours, min.peak = 20){
   pulses <- list()
-  while(max(contours$level) >= min.peak & length(contours) > 1){
+  while (max(contours$level) >= min.peak & length(contours) > 1) {
     current.max <- which.max(contours$level)
-    covers <- gContains(contours[-current.max, ], contours[current.max, ], byid = TRUE)
-    if(sum(covers) == 0){
+    covers <- gContains(
+      contours[-current.max, ],
+      contours[current.max, ],
+      byid = TRUE
+    )
+    if (sum(covers) == 0) {
       contours <- contours[-current.max, ]
-      if(length(contours) == 0){
+      if (length(contours) == 0) {
         break
       } else {
         next
       }
     }
-    selection.topdown <- which(rownames(contours@data) %in% colnames(covers)[covers])
+    selection.topdown <- which(
+      rownames(contours@data) %in% colnames(covers)[covers]
+    )
     lowest <- selection.topdown[which.min(contours$level[selection.topdown])]
     covered <- gWithin(contours[-lowest, ], contours[lowest, ], byid = TRUE)
-    selection.bottumup <- c(lowest, which(rownames(contours@data) %in% colnames(covered)[covered]))
+    selection.bottumup <- c(
+      lowest,
+      which(rownames(contours@data) %in% colnames(covered)[covered])
+    )
     pulses <- c(pulses, contours[selection.bottumup, ])
     contours <- contours[-selection.bottumup, ]
-    if(length(contours) == 0){
+    if (length(contours) == 0) {
       break
     }
   }

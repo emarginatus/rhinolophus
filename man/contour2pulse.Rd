@@ -14,4 +14,15 @@ contour2pulse(contours, min.peak = 20)
 \description{
 Cluster contours into pulses
 }
+\examples{
+wav <- read_wav(
+  system.file("demo_wav/leislers.wav", package = "rhinolophus")
+)
+spectrogram <- wav2spectrogram(wav)
+contours <- spectrogram_contour(spectrogram)
+pulses <- contour2pulse(contours)
+plot(pulses[[1]], asp = 0.25)
+axis(1)
+axis(2)
+}
 

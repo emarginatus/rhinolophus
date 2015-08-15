@@ -5,6 +5,13 @@
 #' @param pulses A list of pulses. E.g. the output of \code{\link{find_pulse}}
 #' @param spectrogram The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}
 #' @param n.fourier The number of required Fourier components in each direction.
+#' @examples
+#' wav <- read_wav(
+#'   system.file("demo_wav/leislers.wav", package = "rhinolophus")
+#' )
+#' spectrogram <- wav2spectrogram(wav)
+#' pulses <- find_pulses(spectrogram = spectrogram)
+#' pulse.fft <- fft_pulse(pulses = pulses, spectrogram = spectrogram)
 fft_pulse <- function(pulses, spectrogram, n.fourier = 30){
   assert_that(is.data.frame(pulses))
   assert_that(inherits(spectrogram, what = "specgram"))

@@ -16,4 +16,12 @@ fft_pulse(pulses, spectrogram, n.fourier = 30)
 \description{
 Calculate the fast fourier transformation for each pulse
 }
+\examples{
+wav <- read_wav(
+  system.file("demo_wav/leislers.wav", package = "rhinolophus")
+)
+spectrogram <- wav2spectrogram(wav)
+pulses <- find_pulses(spectrogram = spectrogram)
+pulse.fft <- fft_pulse(pulses = pulses, spectrogram = spectrogram)
+}
 

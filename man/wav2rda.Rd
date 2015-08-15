@@ -8,19 +8,26 @@ wav2rda(path, te.factor = 10, channel = "right", window.ms = 2,
   min.contour = 10, min.peak = 20, n.fourier = 30)
 }
 \arguments{
-\item{path}{the path of the wav files}
+\item{path}{The path of the wav files. The function will reach recursive in
+the subdirectories of the path.}
 
-\item{te.factor}{The time-expansion factor used in the wav files. Defaults to 10}
+\item{te.factor}{The time-expansion factor used in the wav files. Defaults
+to 10.}
 
-\item{channel}{Which channel will be read. Defaults to "right"}
+\item{channel}{Which channel will be read. Defaults to "right".}
 
-\item{window.ms}{The size of the window for fourier transformation of the sound in milliseconds. The time-expansion factor is taken into account. Defaults to 1.}
+\item{window.ms}{The size of the window for fourier transformation of the
+sound in milliseconds. The time-expansion factor is taken into account.
+Defaults to 1.}
 
-\item{min.contour}{The minimum amplitude to mark the start of a pulse. Expressed in dB above the median amplitude of the wav file.}
+\item{min.contour}{The minimum amplitude to mark the start of a pulse.
+Expressed in dB above the median amplitude of the wav file.}
 
-\item{min.peak}{The required maximum amplitude of a pulse. Pulses with a maximum amplitude below min.peak will be ignored.}
+\item{min.peak}{The required maximum amplitude of a pulse. Pulses with a
+maximum amplitude below min.peak will be ignored.}
 
-\item{n.fourier}{The number of parameters of the Fourier Transformation to store per dimension. Defaults to 30.}
+\item{n.fourier}{The number of parameters of the Fourier Transformation to
+store per dimension. Defaults to 30.}
 }
 \description{
 Find the pulses in a bunch of wav files and save them to rda files

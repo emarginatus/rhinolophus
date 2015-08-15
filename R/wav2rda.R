@@ -14,15 +14,19 @@
 #'    maximum amplitude below min.peak will be ignored.
 #' @param n.fourier The number of parameters of the Fourier Transformation to
 #'    store per dimension. Defaults to 30.
+#' @importFrom assertthat assert_that is.string
 wav2rda <- function(
   path,
   te.factor = 10,
-  channel = "right",
+  channel = c("right", "left"),
   window.ms = 2,
   min.contour = 10,
   min.peak = 20,
   n.fourier = 30
 ){
+  assert_that(is.string(path))
+  channel <- match.arg(channel)
+
   filenames <- list.files(
     path = path,
     pattern = "\\.wav$",

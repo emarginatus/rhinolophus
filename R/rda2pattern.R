@@ -2,7 +2,11 @@
 #' @export
 #' @param path The path of the rda files
 #' @param n.part The number of fourier components to use. Defaults to 10
+#' @importFrom assertthat assert_that is.string is.count
 rda2pattern <- function(path, n.part = 10){
+  assert_that(is.string(path))
+  assert_that(is.count(n.part))
+
   ### Fooling R CMD check
   pulses.fft <- NULL
   rm(pulses.fft)

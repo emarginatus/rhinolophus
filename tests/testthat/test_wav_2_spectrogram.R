@@ -33,3 +33,12 @@ expect_is(
   ),
   "specgram"
 )
+expect_error(
+  wav2spectrogram(
+    wav = read_wav(
+      system.file("demo_wav/leislers.wav", package = "rhinolophus"),
+      channel = "right"
+    )
+  ),
+  "length\\(wav\\$values\\) not greater than 0"
+)

@@ -16,6 +16,7 @@ wav2spectrogram <- function(wav, window.ms = 1){
   assert_that(has_name(wav, "values"))
   assert_that(is.number(wav$sample.rate))
   assert_that(is.numeric(wav$values))
+  assert_that(length(wav$values) > 0)
   assert_that(is.number(window.ms))
   assert_that(window.ms > 0)
 

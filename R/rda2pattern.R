@@ -18,7 +18,7 @@ rda2pattern <- function(path, n.part = 10){
   positions <- do.call(
     rbind,
     lapply(seq_len(n.part), function(i){
-      if(i == 1){
+      if (i == 1) {
         return(matrix(1, ncol = 2, nrow = 1))
       }
       part.positions <- rbind(
@@ -39,8 +39,12 @@ rda2pattern <- function(path, n.part = 10){
         )
       }
     ))
-    colnames(pattern)[rev(seq(ncol(pattern), length = nrow(positions), by = -1))] <-
-      sprintf("fft.%02i.%02i", positions[, 1], positions[, 2])
+    selection <- rev(seq(ncol(pattern), length = nrow(positions), by = -1))
+    colnames(pattern)[selection] <- sprintf(
+      "fft.%02i.%02i",
+      positions[, 1],
+      positions[, 2]
+    )
     pattern <- as.data.frame(pattern)
     cbind(filename = gsub("rda$", "WAV", filename), pattern)
   }))

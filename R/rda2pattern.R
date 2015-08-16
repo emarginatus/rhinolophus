@@ -50,6 +50,6 @@ rda2pattern <- function(path, n.part = 10){
       positions[, 2]
     )
     pattern <- as.data.frame(pattern)
-    cbind(filename = gsub("rda$", "WAV", filename), pattern)
+    cbind(Filename = gsub("rda$", "WAV", filename), pattern)
   }))
 }

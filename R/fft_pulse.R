@@ -2,7 +2,7 @@
 #' @export
 #' @importFrom sp bbox
 #' @importFrom assertthat assert_that is.count has_name
-#' @param pulses A list of pulses. E.g. the output of \code{\link{find_pulse}}
+#' @param pulses A list of pulses. E.g. the output of \code{\link{find_pulses}}
 #' @param spectrogram The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}
 #' @param n.fourier The number of required Fourier components in each direction.
 #' @examples

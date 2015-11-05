@@ -12,10 +12,13 @@ Imports:
     tuneR,
     signal,
     rgeos,
+    assertthat,
+    dplyr,
     class
 Depends:
     kohonen,
     sp,
     raster
 Suggests:
+    testthat,
     igraph

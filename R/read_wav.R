@@ -20,7 +20,7 @@ read_wav <- function(
   assert_that(is.string(filename))
   assert_that(is.count(te.factor))
   if (!file_test("-f", filename)) {
-    stop(filename, " does not exist")
+    stop(normalizePath(filename, winslash = "/"), " is not a file")
   }
 
   header <- readWave(filename, header = TRUE)

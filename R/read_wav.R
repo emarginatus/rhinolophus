@@ -26,9 +26,9 @@ read_wav <- function(
   header <- readWave(filename, header = TRUE)
   raw.data <- readWave(filename)
   if (channel == "left") {
-    selected.channel <- list(raw.data@left)
+    selected.channel <- list(as.integer(raw.data@left))
   } else {
-    selected.channel <- list(raw.data@right)
+    selected.channel <- list(as.integer(raw.data@right))
   }
   names(selected.channel) <- digest(
     list(

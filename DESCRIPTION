@@ -14,6 +14,7 @@ Imports:
     rgeos,
     assertthat,
     dplyr,
+    digest,
     class
 Depends:
     kohonen,

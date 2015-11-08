@@ -4,8 +4,9 @@
 #' @param te.factor The factor to which the original sound was slowed down prior
 #'    to recording
 #' @export
+#' @importFrom assertthat assert_that is.string is.count
 #' @importFrom tuneR readWave
-#' @importFrom assertthat assert_that is.string is.number
+#' @importFrom digest digest
 #' @examples
 #'  wav = read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
@@ -17,7 +18,7 @@ read_wav <- function(
 ){
   channel <- match.arg(channel)
   assert_that(is.string(filename))
-  assert_that(is.number(te.factor))
+  assert_that(is.count(te.factor))
   if (!file_test("-f", filename)) {
     stop(filename, " does not exist")
   }
@@ -25,15 +26,26 @@ read_wav <- function(
   header <- readWave(filename, header = TRUE)
   raw.data <- readWave(filename)
   if (channel == "left") {
-    selected.channel <- raw.data@left
+    selected.channel <- list(raw.data@left)
   } else {
-    selected.channel <- raw.data@right
+    selected.channel <- list(raw.data@right)
   }
-  return(
-    list(
-      sample.rate = header$sample.rate * te.factor,
-      sample = as.integer(header$samples),
-      values = selected.channel
+  names(selected.channel) <- digest(
+    selected.channel[[1]],
+    as.integer(te.factor),
+    as.numeric(header$sample.rate * te.factor),
+    algo = "sha1"
+  )
+  new(
+    "batWav",
+    Wav = selected.channel,
+    Metadata = data.frame(
+      Fingerprint = names(selected.channel),
+      Filename = filename,
+      Channel = factor(channel, levels = c("left", "right")),
+      TimeExpansionFactor = as.integer(te.factor),
+      SamplingRate = as.numeric(header$sample.rate * te.factor),
+      stringsAsFactors = FALSE
     )
   )
 }

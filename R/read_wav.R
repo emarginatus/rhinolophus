@@ -31,9 +31,11 @@ read_wav <- function(
     selected.channel <- list(raw.data@right)
   }
   names(selected.channel) <- digest(
-    selected.channel[[1]],
-    as.integer(te.factor),
-    as.numeric(header$sample.rate * te.factor),
+    list(
+      selected.channel[[1]],
+      as.integer(te.factor),
+      as.numeric(header$sample.rate * te.factor)
+    ),
     algo = "sha1"
   )
   new(

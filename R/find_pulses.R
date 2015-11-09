@@ -73,7 +73,11 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
         )
         recode %>%
           inner_join(x = pulses, by = "Pulse") %>%
-          mutate_(Spectrogram = ~factor(fingerprint)) %>%
+          mutate_(
+            Spectrogram = ~factor(fingerprint),
+            DeltaTime = diff(head(spec$t, 2)),
+            DeltaFrequency = diff(head(spec$f, 2))
+          ) %>%
           filter_(~is.finite(Ratio)) %>%
           rowwise() %>%
           mutate_(Fingerprint = ~sha1(c(Spectrogram, Xmin, Xmax, Ymin, Ymax))) %>%
@@ -82,6 +86,7 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
       }
     )
   )
+
   new(
     Class = "batPulse",
     Metadata = spectrogram@Metadata,

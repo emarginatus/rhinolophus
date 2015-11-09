@@ -20,6 +20,8 @@ setClass(
       Xmax = integer(0),
       Ymin = integer(0),
       Ymax = integer(0),
+      DeltaTime = numeric(0),
+      DeltaFrequency = numeric(0),
       Ratio = numeric(0),
       AmplitudeMin = numeric(0),
       AmplitudeMax = numeric(0),
@@ -39,6 +41,8 @@ setValidity(
     assert_that(inherits(object@PulseMetadata$Xmax, "integer"))
     assert_that(inherits(object@PulseMetadata$Ymin, "integer"))
     assert_that(inherits(object@PulseMetadata$Ymax, "integer"))
+    assert_that(inherits(object@PulseMetadata$DeltaTime, "numeric"))
+    assert_that(inherits(object@PulseMetadata$DeltaFrequency, "numeric"))
     assert_that(inherits(object@PulseMetadata$Ratio, "numeric"))
     assert_that(inherits(object@PulseMetadata$AmplitudeMin, "numeric"))
     assert_that(inherits(object@PulseMetadata$AmplitudeMax, "numeric"))
@@ -46,6 +50,8 @@ setValidity(
     assert_that(anyDuplicated(object@PulseMetadata$Fingerprint) == 0)
     assert_that(all(nchar(object@PulseMetadata$Fingerprint) == 40))
     assert_that(all(is.finite(object@PulseMetadata$Ratio)))
+    assert_that(all(object@PulseMetadata$DeltaTime > 0))
+    assert_that(all(object@PulseMetadata$DeltaFrequency > 0))
     assert_that(all(object@PulseMetadata$Ratio > 0))
 
     assert_that(

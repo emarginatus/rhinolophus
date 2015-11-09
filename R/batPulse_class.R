@@ -9,7 +9,8 @@
 setClass(
   "batPulse",
   representation = representation(
-    PulseMetadata = "data.frame"
+    PulseMetadata = "data.frame",
+    PulseFourier = "list"
   ),
   contains = "batSpectrogram",
   prototype = prototype(
@@ -26,7 +27,8 @@ setClass(
       AmplitudeMin = numeric(0),
       AmplitudeMax = numeric(0),
       stringsAsFactors = FALSE
-    )
+    ),
+    PulseFourier = list()
   )
 )
 
@@ -48,6 +50,8 @@ setValidity(
     assert_that(inherits(object@PulseMetadata$AmplitudeMax, "numeric"))
 
     assert_that(anyDuplicated(object@PulseMetadata$Fingerprint) == 0)
+    assert_that(anyDuplicated(names(object@PulseFourier)) == 0)
+
     assert_that(all(nchar(object@PulseMetadata$Fingerprint) == 40))
     assert_that(all(is.finite(object@PulseMetadata$Ratio)))
     assert_that(all(object@PulseMetadata$DeltaTime > 0))
@@ -58,6 +62,12 @@ setValidity(
       all(
         levels(object@PulseMetadata$Spectrogram) %in%
           object@SpectrogramMetadata$Fingerprint
+      )
+    )
+    assert_that(
+      all(
+        names(object@PulseFourier$Spectrogram) %in%
+          object@PulseMetadata$Fingerprint
       )
     )
     return(TRUE)

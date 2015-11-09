@@ -63,8 +63,7 @@ wav2rda <- function(
     rm(pulses)
     save(
       pulses.fft,
-      file = gsub("(WAV|wav)$", "rda", filename),
-      compress = "xz"
+      file = gsub("(WAV|wav)$", "rda", filename)
     )
     rm(pulses.fft)
     gc()

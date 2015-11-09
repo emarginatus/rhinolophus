@@ -24,3 +24,23 @@ Depends:
 Suggests:
     testthat,
     igraph
+Collate:
+    'batMetadata_class.R'
+    'batSpectrogram_class.R'
+    'batPulse_class.R'
+    'batWav_class.R'
+    'contour2pulse.R'
+    'ensemble_predict.R'
+    'fft_pulse.R'
+    'find_pulses.R'
+    'next_power_2.R'
+    'plotpattern.R'
+    'prepareplot.R'
+    'rda2pattern.R'
+    'read_wav.R'
+    'reconstruct_pulse.R'
+    'sample_pulse.R'
+    'spectrogram_contour.R'
+    'trainrda.R'
+    'wav2rda.R'
+    'wav2spectrogram.R'

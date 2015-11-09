@@ -5,6 +5,7 @@
 #' @aliases batSpectrogram-class
 #' @importFrom methods setClass
 #' @docType class
+#' @include batMetadata_class.R
 setClass(
   "batSpectrogram",
   representation = representation(

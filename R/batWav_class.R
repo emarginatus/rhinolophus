@@ -5,6 +5,7 @@
 #' @aliases batWav-class
 #' @importFrom methods setClass
 #' @docType class
+#' @include batMetadata_class.R
 setClass(
   "batWav",
   representation = representation(

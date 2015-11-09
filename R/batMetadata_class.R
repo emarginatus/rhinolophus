@@ -39,6 +39,7 @@ setValidity(
     assert_that(inherits(object@Metadata$TimeExpansionFactor, "integer"))
     assert_that(inherits(object@Metadata$SamplingRate, "numeric"))
 
+    assert_that(anyDuplicated(object@Metadata$Fingerprint) == 0)
     assert_that(all(nchar(object@Metadata$Fingerprint) == 40L))
     assert_that(all(levels(object@Metadata$Channel) == c("left", "right")))
     return(TRUE)

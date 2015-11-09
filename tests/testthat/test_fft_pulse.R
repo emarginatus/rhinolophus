@@ -11,22 +11,8 @@ pulse.fft <- fft_pulse(
   n.fourier = n.fourier
 )
 
-expect_is(pulse.fft, "list")
-expect_is(pulse.fft[[1]], "list")
-expect_identical(names(pulse.fft[[1]]), c("parameters", "fft.dim", "fft"))
-
-expect_is(pulse.fft[[1]]$parameters, "numeric")
+expect_is(pulse.fft, "batPulse")
 expect_identical(
-  names(pulse.fft[[1]]$parameters),
-  c(
-    "Pulse", "StartTime", "PulsDuration", "TimeDelta", "FrequencyMin",
-    "FrequencyMax", "FrequencyDelta", "Ratio", "AmplitudeMin", "AmplitudeMax"
-  )
+  names(pulse.fft@PulseFourier),
+  pulse.fft@PulseMetadata$Fingerprint
 )
-
-expect_is(pulse.fft[[1]]$fft.dim, "integer")
-expect_identical(length(pulse.fft[[1]]$fft.dim), 2L)
-
-expect_is(pulse.fft[[1]]$fft, "matrix")
-expect_identical(dim(pulse.fft[[1]]$fft), rep(n.fourier, 2))
-expect_is(pulse.fft[[1]]$fft[1, 1], "complex")

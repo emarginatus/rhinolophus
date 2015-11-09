@@ -32,10 +32,10 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
         spec <- spectrogram@Spectrogram[[fingerprint]]
         spectrogram.raster <- raster(
           spec$S[rev(seq_len(nrow(spec$S))), ],
-          xmn = min(spec$t) * 1000,
-          xmx = max(spec$t) * 1000,
-          ymn = min(spec$f) / 1000,
-          ymx = max(spec$f) / 1000
+          xmn = min(spec$t),
+          xmx = max(spec$t),
+          ymn = min(spec$f),
+          ymx = max(spec$f)
         )
         names(spectrogram.raster) <- "dB"
 

@@ -41,7 +41,7 @@ wav2rda <- function(
       te.factor = te.factor,
       channel = channel
     )
-    if (length(wav$values) == 0) {
+    if (length(wav@Wav[[1]]) == 0) {
       warning(filename, " contains no information in the ", channel, " channel")
       next
     }

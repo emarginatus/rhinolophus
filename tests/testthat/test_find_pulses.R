@@ -3,11 +3,7 @@ wav <- read_wav(
   system.file("demo_wav/leislers.wav", package = "rhinolophus")
 )
 spectrogram <- wav2spectrogram(wav)
-expect_is(pulses <- find_pulses(spectrogram), "data.frame")
-expect_identical(
-  colnames(pulses),
-  c("Pulse", "Xmin", "Xmax", "Ymin", "Ymax", "Ratio", "AmplitudeMin", "AmplitudeMax")
-)
+expect_is(pulses <- find_pulses(spectrogram), "batPulse")
 expect_error(
   find_pulses(spectrogram, min.contour = "a"),
   "min\\.contour is not a number \\(a length one numeric vector\\)\\."
@@ -22,5 +18,5 @@ expect_error(
 )
 expect_error(
   find_pulses("a"),
-  "spectrogram does not inherit from class specgram"
+  "spectrogram does not inherit from class batSpectrogram"
 )

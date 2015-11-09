@@ -63,8 +63,8 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
                   Pulse = i,
                   Xmin = ~min(col),
                   Xmax = ~max(col),
-                  Ymin = ~min(row),
-                  Ymax = ~max(row),
+                  Ymin = ~1L + nrow(spec$S) - max(row),
+                  Ymax = ~1L + nrow(spec$S) - min(row),
                   Ratio = ~n() / (diff(range(col)) * diff(range(row))),
                   AmplitudeMin = min.contour
                 )

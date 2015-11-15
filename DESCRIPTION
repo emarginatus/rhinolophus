@@ -13,6 +13,7 @@ Imports:
     signal,
     assertthat,
     dplyr,
+    tidyr,
     digest,
     methods,
     class
@@ -30,6 +31,7 @@ Collate:
     'batWav_class.R'
     'combine_rda.R'
     'ensemble_predict.R'
+    'extract_parameter.R'
     'fft_pulse.R'
     'find_pulses.R'
     'next_power_2.R'

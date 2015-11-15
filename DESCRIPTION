@@ -11,7 +11,6 @@ License: GPL-3
 Imports:
     tuneR,
     signal,
-    rgeos,
     assertthat,
     dplyr,
     digest,
@@ -35,7 +34,6 @@ Collate:
     'next_power_2.R'
     'plotpattern.R'
     'prepareplot.R'
-    'rda2pattern.R'
     'read_wav.R'
     'reconstruct_pulse.R'
     'sample_pulse.R'

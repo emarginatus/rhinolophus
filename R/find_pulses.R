@@ -32,14 +32,22 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
         spec <- spectrogram@Spectrogram[[fingerprint]]
         spectrogram.raster <- spectrogram.raster(spec)
 
-        minimum.contour <- clump(spectrogram.raster >= min.contour, directions = 4)
+        minimum.contour <- clump(
+          spectrogram.raster >= min.contour,
+          directions = 4
+        )
         local.max <- zonal(spectrogram.raster, minimum.contour, fun = max)
         recode <- local.max %>%
           as.data.frame() %>%
           filter_(~ value >= min.peak) %>%
           rename_(AmplitudeMax = ~value) %>%
           mutate_(Pulse = ~seq_along(zone))
-        selected.pulses <- subs(minimum.contour, recode, by = "zone", which = "Pulse")
+        selected.pulses <- subs(
+          minimum.contour,
+          recode,
+          by = "zone",
+          which = "Pulse"
+        )
 
         pulses <- do.call(
           rbind,
@@ -73,7 +81,9 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
           ) %>%
           filter_(~is.finite(Ratio)) %>%
           rowwise() %>%
-          mutate_(Fingerprint = ~sha1(c(Spectrogram, Xmin, Xmax, Ymin, Ymax))) %>%
+          mutate_(
+            Fingerprint = ~sha1(c(Spectrogram, Xmin, Xmax, Ymin, Ymax))
+          ) %>%
           select_(~-zone, ~-Pulse) %>%
           as.data.frame()
       }

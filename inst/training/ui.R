@@ -6,8 +6,8 @@ shinyUI(
     sidebarLayout(
       sidebarPanel = sidebarPanel(
         fileInput(
-          inputId = "pulse.file",
-          label = "Upload a batPulse object",
+          inputId = "wav.file",
+          label = "Upload a batWav object",
           width = "100px"
         ),
         numericInput(
@@ -15,13 +15,14 @@ shinyUI(
           label = "Pulse",
           value = 1,
          width = "100px"
-        )
+        ),
+        width = 2
       ),
       mainPanel = mainPanel(
         textOutput("filename"),
-        plotOutput("plot.pulse")
+        plotOutput("plot")
       ),
-      position = "left"
+      position = "right"
     )
   )
 )

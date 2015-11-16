@@ -52,6 +52,14 @@ shinyUI(
           value = c(10, 150),
           step = 1
         ),
+        sliderInput(
+          inputId = "time",
+          label = "Display time (ms)",
+          min = 0,
+          max = 200,
+          value = c(0, 200),
+          step = 1
+        ),
         width = 3
       ),
       mainPanel = mainPanel(

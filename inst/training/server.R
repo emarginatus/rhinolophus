@@ -41,6 +41,15 @@ shinyServer(
         min = frequency.range[1],
         max = frequency.range[2]
       )
+      time.range <- range(
+        pretty(spectrogram()@Spectrogram[[1]]$t, 50)
+      ) * 1e3
+      updateSliderInput(
+        session = session,
+        inputId = "time",
+        min = time.range[1],
+        max = time.range[2]
+      )
     })
 
     spectrogram.raster <- reactive({
@@ -81,6 +90,7 @@ shinyServer(
         main = wav()@Metadata$Filename,
         breaks = ramp()$Breaks,
         col = ramp()$Colour,
+        xlim = input$time / 1e3,
         ylim = input$frequency * 1e3,
         xlab = "Time (s)",
         ylab = "Frequency (Hz)"

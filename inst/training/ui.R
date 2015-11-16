@@ -19,7 +19,7 @@ shinyUI(
         width = 2
       ),
       mainPanel = mainPanel(
-        plotOutput("plot")
+        plotOutput("plot", height = "700px")
       ),
       position = "right"
     )

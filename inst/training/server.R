@@ -10,9 +10,13 @@ shinyServer(
           list()
         )
       }
-      import.env <- new.env()
-      load(input$wav.file$datapath, envir = import.env)
-      get("wav", envir = import.env)
+      bat.wav <- read_wav(
+        input$wav.file$datapath,
+        channel = input$channel,
+        te.factor = input$te.factor
+      )
+      bat.wav@Metadata$Filename <- input$wav.file$name
+      bat.wav
     })
 
     spectrogram <- reactive({

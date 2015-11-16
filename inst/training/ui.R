@@ -5,10 +5,28 @@ shinyUI(
     titlePanel("Add training information"),
     sidebarLayout(
       sidebarPanel = sidebarPanel(
+        radioButtons(
+          inputId = "channel",
+          label = "Channel",
+          choices = c("left", "right"),
+          selected = "left",
+          inline = TRUE,
+          width = "100%"
+        ),
+        numericInput(
+          inputId = "te.factor",
+          label = "Time expansion factor",
+          value = 10,
+          min = 1,
+          max = 100,
+          step = 1,
+          width = "100%"
+        ),
         fileInput(
           inputId = "wav.file",
-          label = "Upload a batWav object",
-          width = "100px"
+          label = "Upload a wav file",
+          accept = "audio/x-wav",
+          width = "100%"
         ),
         sliderInput(
           inputId = "window",

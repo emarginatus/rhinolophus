@@ -65,6 +65,7 @@ shinyServer(
         main = wav()@Metadata$Filename,
         breaks = ramp()$Breaks,
         col = ramp()$Colour,
+        ylim = input$frequency * 1e3,
         xlab = "Time (s)",
         ylab = "Frequency (Hz)"
       )

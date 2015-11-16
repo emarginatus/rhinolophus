@@ -44,6 +44,14 @@ shinyUI(
           value = c(10, 20),
           step = 1
         ),
+        sliderInput(
+          inputId = "frequency",
+          label = "Display frequency (kHz)",
+          min = 0,
+          max = 200,
+          value = c(10, 150),
+          step = 1
+        ),
         width = 3
       ),
       mainPanel = mainPanel(

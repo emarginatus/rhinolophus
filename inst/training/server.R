@@ -43,6 +43,14 @@ shinyServer(
       pulse_border(pulses())
     })
 
+    ramp <- reactive({
+      midpoint_ramp(
+        spectrogram.raster(),
+        mid.point = as.numeric(input$amplitude[1]),
+        n = 20
+      )
+    })
+
     output$plot <- renderPlot({
       if (is.null(input$wav.file)) {
         return(character(0))
@@ -51,6 +59,8 @@ shinyServer(
         spectrogram.raster(),
         asp = 0.5e-6,
         main = wav()@Metadata$Filename,
+        breaks = ramp()$Breaks,
+        col = ramp()$Colour,
         xlab = "Time (s)",
         ylab = "Frequency (Hz)"
       )

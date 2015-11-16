@@ -50,7 +50,7 @@ shinyUI(
         plotOutput("plot", height = "700px"),
         width = 9
       ),
-      position = "right"
+      position = "left"
     )
   )
 )

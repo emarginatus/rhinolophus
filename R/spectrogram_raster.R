@@ -7,11 +7,11 @@ spectrogram_raster <- function(spectrogram){
   assert_that(inherits(spectrogram, "specgram"))
 
   spectrogram.raster <- raster(
-    spec$S[rev(seq_len(nrow(spec$S))), ],
-    xmn = min(spec$t),
-    xmx = max(spec$t),
-    ymn = min(spec$f),
-    ymx = max(spec$f)
+    spectrogram$S[rev(seq_len(nrow(spectrogram$S))), ],
+    xmn = min(spectrogram$t),
+    xmx = max(spectrogram$t),
+    ymn = min(spectrogram$f),
+    ymx = max(spectrogram$f)
   )
   names(spectrogram.raster) <- "dB"
 

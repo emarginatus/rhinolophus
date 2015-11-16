@@ -29,9 +29,15 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
     lapply(
       names(spectrogram@Spectrogram),
       function(fingerprint){
-        spec <- spectrogram@Spectrogram[[fingerprint]]
-        spectrogram.raster <- spectrogram.raster(spec)
-
+        spectrogram.raster <- spectrogram_raster(
+          spectrogram@Spectrogram[[fingerprint]]
+        )
+        delta.time <- (
+          spectrogram.raster@extent@xmax - spectrogram.raster@extent@xmin
+        ) / (ncol(spectrogram.raster) - 1)
+        delta.frequency <- (
+          spectrogram.raster@extent@ymax - spectrogram.raster@extent@ymin
+        ) / (nrow(spectrogram.raster) - 1)
         minimum.contour <- clump(
           spectrogram.raster >= min.contour,
           directions = 4
@@ -58,14 +64,15 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
                 selected.pulses,
                 Which(selected.pulses == i, cells = TRUE)
               )
+
               xy %>%
                 as.data.frame() %>%
                 summarize_(
                   Pulse = i,
                   Xmin = ~min(col),
                   Xmax = ~max(col),
-                  Ymin = ~1L + nrow(spec$S) - max(row),
-                  Ymax = ~1L + nrow(spec$S) - min(row),
+                  Ymin = ~as.integer(1 + nrow(spectrogram.raster) - max(row)),
+                  Ymax = ~as.integer(1 + nrow(spectrogram.raster) - min(row)),
                   Ratio = ~n() / (diff(range(col)) * diff(range(row))),
                   AmplitudeMin = min.contour
                 )
@@ -76,8 +83,8 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
           inner_join(x = pulses, by = "Pulse") %>%
           mutate_(
             Spectrogram = ~factor(fingerprint),
-            DeltaTime = diff(head(spec$t, 2)),
-            DeltaFrequency = diff(head(spec$f, 2))
+            DeltaTime = delta.time,
+            DeltaFrequency = delta.frequency
           ) %>%
           filter_(~is.finite(Ratio)) %>%
           rowwise() %>%

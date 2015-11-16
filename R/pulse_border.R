@@ -1,7 +1,7 @@
 #' Calculate the bounding box of a pulse
 #' @param pulse a dataframe with a single pulse
 #' @importFrom assertthat assert_that has_name
-#' @importFrom dplyr %>% transmute_ bind_rows arrange_
+#' @importFrom dplyr %>% select_ transmute_ bind_rows arrange_
 #' @export
 pulse_border <- function(pulse){
   assert_that(inherits(pulse, "data.frame"))
@@ -9,18 +9,12 @@ pulse_border <- function(pulse){
   assert_that(has_name(pulse, "Xmax"))
   assert_that(has_name(pulse, "Ymin"))
   assert_that(has_name(pulse, "Ymax"))
-  assert_that(has_name(pulse, "DeltaTime"))
-  assert_that(has_name(pulse, "DeltaFrequency"))
+#   assert_that(has_name(pulse, "DeltaTime"))
+#   assert_that(has_name(pulse, "DeltaFrequency"))
   assert_that(has_name(pulse, "Fingerprint"))
 
   pulse <- pulse %>%
-    transmute_(
-      ~Fingerprint,
-      Xmin = ~(Xmin - 1) * DeltaTime,
-      Xmax = ~Xmax * DeltaTime,
-      Ymin = ~(Ymin - 1) * DeltaFrequency,
-      Ymax = ~Ymax * DeltaFrequency
-    )
+    select_(~Fingerprint, ~Xmin, ~Xmax, ~Ymin, ~Ymax)
   bind_rows(
     pulse %>%
       transmute_(~Fingerprint, X = ~Xmin, Y = ~Ymin, Order = ~1),

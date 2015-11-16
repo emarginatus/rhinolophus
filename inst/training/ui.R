@@ -13,23 +13,24 @@ shinyUI(
         sliderInput(
           inputId = "window",
           label = "Moving window (ms)",
-          value = 1,
-          min = 0.1,
-          max = 10,
-          step = 0.1
+          value = 0.5,
+          min = 0.05,
+          max = 3,
+          step = 0.05
         ),
         sliderInput(
           inputId = "amplitude",
-          label = "Amplitude (rel. dB)",
-          min = -30,
+          label = "Selection amplitude (rel. dB)",
+          min = -10,
           max = 50,
           value = c(10, 20),
           step = 1
         ),
-        width = 2
+        width = 3
       ),
       mainPanel = mainPanel(
-        plotOutput("plot", height = "700px")
+        plotOutput("plot", height = "700px"),
+        width = 9
       ),
       position = "right"
     )

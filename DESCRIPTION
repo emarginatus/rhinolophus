@@ -29,6 +29,7 @@ Collate:
     'batSpectrogram_class.R'
     'batPulse_class.R'
     'batWav_class.R'
+    'batpulse_rda2list.R'
     'combine_rda.R'
     'ensemble_predict.R'
     'extract_parameter.R'

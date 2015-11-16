@@ -47,7 +47,13 @@ shinyServer(
       if (is.null(input$wav.file)) {
         return(character(0))
       }
-      plot(spectrogram.raster(), asp = 0.5e-6, main = wav()@Metadata$Filename, xlab = "Time (s)", ylab = "Frequency (Hz)")
+      plot(
+        spectrogram.raster(),
+        asp = 0.5e-6,
+        main = wav()@Metadata$Filename,
+        xlab = "Time (s)",
+        ylab = "Frequency (Hz)"
+      )
       lines(borders())
     })
   }

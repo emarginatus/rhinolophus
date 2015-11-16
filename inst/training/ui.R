@@ -28,13 +28,13 @@ shinyUI(
           accept = "audio/x-wav",
           width = "100%"
         ),
-        sliderInput(
+        radioButtons(
           inputId = "window",
           label = "Moving window (ms)",
-          value = 0.5,
-          min = 0.05,
-          max = 3,
-          step = 0.05
+          choices = c("0.5", "1", "2"),
+          selected = "0.5",
+          inline = TRUE,
+          width = "100%"
         ),
         sliderInput(
           inputId = "amplitude",

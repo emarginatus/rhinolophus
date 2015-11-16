@@ -15,13 +15,6 @@ shinyServer(
       get("wav", envir = import.env)
     })
 
-    output$filename <- renderText({
-      if (is.null(input$wav.file)) {
-        return(character(0)        )
-      }
-      wav()@Metadata$Filename
-    })
-
     spectrogram <- reactive({
       if (is.null(input$wav.file)) {
         return(
@@ -54,7 +47,7 @@ shinyServer(
       if (is.null(input$wav.file)) {
         return(character(0))
       }
-      plot(spectrogram.raster(), asp = 0.5e-6)
+      plot(spectrogram.raster(), asp = 0.5e-6, main = wav()@Metadata$Filename, xlab = "Time (s)", ylab = "Frequency (Hz)")
       lines(borders())
     })
   }

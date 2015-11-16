@@ -19,7 +19,6 @@ shinyUI(
         width = 2
       ),
       mainPanel = mainPanel(
-        textOutput("filename"),
         plotOutput("plot")
       ),
       position = "right"

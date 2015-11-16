@@ -1,6 +1,6 @@
 #' Find the location of possible pulses in a spectrogram
 #' @export
-#' @importFrom raster raster Which rowColFromCell zonal clump subs
+#' @importFrom raster Which rowColFromCell zonal clump subs
 #' @importFrom assertthat assert_that is.number
 #' @importFrom dplyr %>% filter_ rename_ mutate_ summarize_ select_ inner_join rowwise
 #' @importFrom digest digest
@@ -30,14 +30,7 @@ find_pulses <- function(spectrogram, min.contour = 10, min.peak = 20){
       names(spectrogram@Spectrogram),
       function(fingerprint){
         spec <- spectrogram@Spectrogram[[fingerprint]]
-        spectrogram.raster <- raster(
-          spec$S[rev(seq_len(nrow(spec$S))), ],
-          xmn = min(spec$t),
-          xmx = max(spec$t),
-          ymn = min(spec$f),
-          ymx = max(spec$f)
-        )
-        names(spectrogram.raster) <- "dB"
+        spectrogram.raster <- spectrogram.raster(spec)
 
         minimum.contour <- clump(spectrogram.raster >= min.contour, directions = 4)
         local.max <- zonal(spectrogram.raster, minimum.contour, fun = max)

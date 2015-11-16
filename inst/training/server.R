@@ -34,8 +34,8 @@ shinyServer(
     pulses <- reactive({
       find_pulses(
         spectrogram = spectrogram(),
-        min.contour = 10,
-        min.peak = 20
+        min.contour = as.numeric(input$amplitude[1]),
+        min.peak = as.numeric(input$amplitude[2])
       )
     })
 

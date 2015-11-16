@@ -18,6 +18,13 @@ shinyUI(
           max = 10,
           step = 0.1
         ),
+        sliderInput(
+          inputId = "amplitude",
+          label = "Amplitude (rel. dB)",
+          min = -30,
+          max = 50,
+          value = c(10, 20),
+          step = 1
         ),
         width = 2
       ),

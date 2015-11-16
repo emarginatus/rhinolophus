@@ -3,7 +3,7 @@ library(rhinolophus)
 library(dplyr)
 
 shinyServer(
-  function(input, output){
+  function(input, output, session){
     wav <- reactive({
       if (is.null(input$wav.file)) {
         return(
@@ -28,12 +28,28 @@ shinyServer(
       wav2spectrogram(wav(), window.ms = as.numeric(input$window))
     })
 
+    observe({
+      if (is.null(input$wav.file)) {
+        return(NULL)
+      }
+      frequency.range <- range(
+        pretty(spectrogram()@Spectrogram[[1]]$f, 50)
+      ) / 1e3
+      updateSliderInput(
+        session = session,
+        inputId = "frequency",
+        min = frequency.range[1],
+        max = frequency.range[2]
+      )
+    })
+
     spectrogram.raster <- reactive({
       if (is.null(input$wav.file)) {
         return(character(0)        )
       }
       spectrogram_raster(spectrogram = spectrogram()@Spectrogram[[1]])
     })
+
 
     pulses <- reactive({
       find_pulses(

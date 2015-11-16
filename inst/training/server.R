@@ -21,7 +21,7 @@ shinyServer(
           list()
         )
       }
-      wav2spectrogram(wav(), window.ms = 1)
+      wav2spectrogram(wav(), window.ms = as.numeric(input$window))
     })
 
     spectrogram.raster <- reactive({

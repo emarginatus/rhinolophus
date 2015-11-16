@@ -10,11 +10,14 @@ shinyUI(
           label = "Upload a batWav object",
           width = "100px"
         ),
-        numericInput(
-         "i",
-          label = "Pulse",
+        sliderInput(
+          inputId = "window",
+          label = "Moving window (ms)",
           value = 1,
-         width = "100px"
+          min = 0.1,
+          max = 10,
+          step = 0.1
+        ),
         ),
         width = 2
       ),

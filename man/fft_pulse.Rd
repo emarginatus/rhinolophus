@@ -4,12 +4,10 @@
 \alias{fft_pulse}
 \title{Calculate the fast fourier transformation for each pulse}
 \usage{
-fft_pulse(pulses, spectrogram, n.fourier = 30)
+fft_pulse(pulses, n.fourier = 30)
 }
 \arguments{
 \item{pulses}{A list of pulses. E.g. the output of \code{\link{find_pulses}}}
-
-\item{spectrogram}{The spectrogram. E.g. the output of \code{\link{wav2spectrogram}}}
 
 \item{n.fourier}{The number of required Fourier components in each direction.}
 }
@@ -22,6 +20,6 @@ wav <- read_wav(
 )
 spectrogram <- wav2spectrogram(wav)
 pulses <- find_pulses(spectrogram = spectrogram)
-pulse.fft <- fft_pulse(pulses = pulses, spectrogram = spectrogram)
+pulse.fft <- fft_pulse(pulses = pulses, n.fourier = 10)
 }
 

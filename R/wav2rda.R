@@ -55,15 +55,15 @@ wav2rda <- function(
       min.contour = min.contour,
       min.peak = min.peak
     )
+    rm(spectrogram)
     pulses.fft <- fft_pulse(
       pulses = pulses,
-      spectrogram = spectrogram,
       n.fourier = n.fourier
     )
     rm(pulses)
     save(
       pulses.fft,
-      file = gsub("(WAV|wav)$", "rda", filename)
+      file = gsub("\\.(WAV|wav)$", ".rda", filename)
     )
     rm(pulses.fft)
     gc()

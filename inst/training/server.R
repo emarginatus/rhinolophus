@@ -80,6 +80,43 @@ shinyServer(
       pulse_border(pulses())
     })
 
+    observe({
+      if (is.null(input$wav.file)) {
+        return(NULL)
+      }
+      updateSelectInput(
+        session = session,
+        inputId = "pulse",
+        choices = c("", pulse_label(borders()))
+      )
+    })
+
+    observe({
+      if (is.null(input$wav.file) | input$pulse == "") {
+        return(NULL)
+      }
+      frequency.value <- borders()@data[input$pulse, c("Ymin", "Ymax")] * 1e-3
+      frequency.value <- c(
+        frequency.value$Ymin - 5,
+        frequency.value$Ymax + 5
+      )
+      time.value <- borders()@data[input$pulse, c("Xmin", "Xmax")] * 1e3
+      time.value <- c(
+        time.value$Xmin - 5,
+        time.value$Xmax + 5
+      )
+      updateSliderInput(
+        session = session,
+        inputId = "frequency",
+        value = frequency.value
+      )
+      updateSliderInput(
+        session = session,
+        inputId = "time",
+        value = time.value
+      )
+    })
+
     ramp <- reactive({
       midpoint_ramp(
         spectrogram.raster(),

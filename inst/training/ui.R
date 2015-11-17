@@ -44,6 +44,11 @@ shinyUI(
           value = c(10, 20),
           step = 1
         ),
+        selectInput(
+          inputId = "pulse",
+          label = "Select a pulse",
+          choices = ""
+        ),
         sliderInput(
           inputId = "frequency",
           label = "Display frequency (kHz)",

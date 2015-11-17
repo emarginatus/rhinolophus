@@ -7,7 +7,7 @@
 pulse_label(borders)
 }
 \arguments{
-\item{borders}{a SpatialPolygons object}
+\item{borders}{a SpatialPolygonsDataFrame object}
 }
 \description{
 Generate labels for the pulse

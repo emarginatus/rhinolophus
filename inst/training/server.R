@@ -38,6 +38,10 @@ shinyServer(
       updateSliderInput(
         session = session,
         inputId = "frequency",
+        value = c(
+          max(10, frequency.range[1]),
+          min(150, frequency.range[2])
+        ),
         min = frequency.range[1],
         max = frequency.range[2]
       )
@@ -47,6 +51,10 @@ shinyServer(
       updateSliderInput(
         session = session,
         inputId = "time",
+        value = c(
+          max(0, time.range[1]),
+          min(200, time.range[2])
+        ),
         min = time.range[1],
         max = time.range[2]
       )

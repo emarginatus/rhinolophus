@@ -1,6 +1,5 @@
 library(shiny)
 library(rhinolophus)
-library(dplyr)
 
 shinyServer(
   function(input, output, session){
@@ -125,15 +124,6 @@ shinyServer(
       )
     })
 
-    truth <- data.frame(
-      File = character(0),
-      Spectrogram = character(0),
-      Pulse = character(0),
-      Species = character(0),
-      Type = character(0),
-      stringsAsFactors = FALSE
-    )
-
     output$plot <- renderPlot({
       if (is.null(input$wav.file)) {
         return(character(0))
@@ -151,5 +141,82 @@ shinyServer(
       )
       lines(borders())
     })
+
+    truth.env <- new.env()
+
+    assign(
+      x = "truth",
+      value = data.frame(
+        File = character(0),
+        Spectrogram = character(0),
+        Pulse = character(0),
+        Species = character(0),
+        Type = character(0),
+        stringsAsFactors = FALSE
+      )
+    )
+
+    observeEvent(
+      input$new.truth,
+      {
+        cat("truth 1")
+        if (is.null(input$wav.file) || input$pulse == "") {
+          cat("truth a")
+          return(NULL)
+        }
+        cat("truth b")
+
+        truth <- rbind(
+          get("truth", envir = truth.env),
+          data.frame(
+            File = spectrogram()@Metadata$Fingerprint,
+            Spectrogram = spectrogram()@SpectrogramMetadata$Fingerprint,
+            Pulse = input$pulse,
+            Species = ifelse(
+              input$new.species == "",
+              input$species,
+              input$new.species
+            ),
+            Type = ifelse(
+              input$new.type == "",
+              input$type,
+              input$new.type
+            ),
+            stringsAsFactors = FALSE
+          )
+        )
+        assign(
+          x = "truth",
+          envir = truth.env,
+          value = truth
+        )
+        if (input$new.species != "") {
+          updateRadioButtons(
+            session = session,
+            inputId = "species",
+            choices = unique(c("noise", truth$Species))
+          )
+          updateTextInput(
+            session = session,
+            inputId = "new.species",
+            value = ""
+          )
+        }
+        if (input$new.type != "") {
+          updateRadioButtons(
+            session = session,
+            inputId = "type",
+            choices = unique(
+              c("call", truth$Type)
+            )
+          )
+          updateTextInput(
+            session = session,
+            inputId = "new.type",
+            value = ""
+          )
+        }
+      }
+    )
   }
 )

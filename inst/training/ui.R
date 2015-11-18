@@ -6,6 +6,12 @@ shinyUI(
       column(
         2,
         wellPanel(
+          fileInput(
+            inputId = "wav.file",
+            label = "Upload a wav file",
+            accept = "audio/x-wav",
+            width = "100%"
+          ),
           radioButtons(
             inputId = "channel",
             label = "Channel",
@@ -21,12 +27,6 @@ shinyUI(
             min = 1,
             max = 100,
             step = 1,
-            width = "100%"
-          ),
-          fileInput(
-            inputId = "wav.file",
-            label = "Upload a wav file",
-            accept = "audio/x-wav",
             width = "100%"
           )
         ),

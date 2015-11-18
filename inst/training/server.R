@@ -87,7 +87,7 @@ shinyServer(
       updateSelectInput(
         session = session,
         inputId = "pulse",
-        choices = c("", pulse_label(borders()))
+        choices = c("Select a pulse" = "", pulse_label(borders()))
       )
     })
 
@@ -124,6 +124,15 @@ shinyServer(
         n = 20
       )
     })
+
+    truth <- data.frame(
+      File = character(0),
+      Spectrogram = character(0),
+      Pulse = character(0),
+      Species = character(0),
+      Type = character(0),
+      stringsAsFactors = FALSE
+    )
 
     output$plot <- renderPlot({
       if (is.null(input$wav.file)) {

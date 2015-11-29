@@ -8,10 +8,10 @@ spectrogram_raster <- function(spectrogram){
 
   spectrogram.raster <- raster(
     spectrogram$S[rev(seq_len(nrow(spectrogram$S))), ],
-    xmn = min(spectrogram$t),
-    xmx = max(spectrogram$t),
-    ymn = min(spectrogram$f),
-    ymx = max(spectrogram$f)
+    xmn = min(spectrogram$t) * 1e3,
+    xmx = max(spectrogram$t) * 1e3,
+    ymn = min(spectrogram$f) * 1e-3,
+    ymx = max(spectrogram$f) * 1e-3
   )
   names(spectrogram.raster) <- "dB"
 

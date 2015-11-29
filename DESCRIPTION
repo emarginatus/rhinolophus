@@ -16,11 +16,10 @@ Imports:
     tidyr,
     digest,
     methods,
+    raster,
     class
 Depends:
-    kohonen,
-    sp,
-    raster
+    kohonen
 Suggests:
     testthat,
     igraph

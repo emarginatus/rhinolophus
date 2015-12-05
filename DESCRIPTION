@@ -16,6 +16,7 @@ Imports:
     tidyr,
     digest,
     methods,
+    sp,
     raster,
     class
 Depends:

@@ -4,20 +4,23 @@
 \alias{find_pulses}
 \title{Find the location of possible pulses in a spectrogram}
 \usage{
-find_pulses(spectrogram, min.contour = 10, min.peak = 20)
+find_pulses(spectrogram, min.peak = 20, min.amplitude = 10,
+  delta.amplitude = 5)
 }
 \arguments{
 \item{spectrogram}{The spectrogram}
 
-\item{min.contour}{The minimum amplitude of the pulse}
+\item{min.peak}{Take only pulses into account with a maximum amplitude of at least min.peak}
 
-\item{min.peak}{Take only contour into account with a maximum amplitude of at least min.peak}
+\item{min.amplitude}{The minimum amplitude of the pulse}
+
+\item{delta.amplitude}{The step size in which the pulse is extracted. See details}
 }
 \description{
-Find the location of possible pulses in a spectrogram
+The pulses are extracted in steps of \code{delta.amplitude}. Suppose \code{delta.amplitude = 5} and \code{min.amplitude = 10}. The maximum amplitude of the current pulse is \code{max.amplitude = 43.6}. Then the pulse will be extracted with lower bounds of amplitude of \code{c(38.6, 33.6, 28.6, 23.6, 18.6, 13.6)}.
 }
 \examples{
-wav <- read_wav(
+ wav <- read_wav(
    system.file("demo_wav/leislers.wav", package = "rhinolophus")
  )
  spectrogram <- wav2spectrogram(wav)

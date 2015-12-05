@@ -15,7 +15,7 @@ wav2spectrogram(wav, window.ms = 1)
 Convert the output of read_wav to a spectrogram
 }
 \examples{
-wav2spectrogram(
+ wav2spectrogram(
    wav = read_wav(
      system.file("demo_wav/leislers.wav", package = "rhinolophus")
    )

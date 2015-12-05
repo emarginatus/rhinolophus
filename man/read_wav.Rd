@@ -18,7 +18,7 @@ to recording}
 read a WAV file
 }
 \examples{
-wav = read_wav(
+ wav = read_wav(
    system.file("demo_wav/leislers.wav", package = "rhinolophus")
  )
 }

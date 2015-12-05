@@ -48,3 +48,4 @@ Collate:
     'trainrda.R'
     'wav2rda.R'
     'wav2spectrogram.R'
+RoxygenNote: 5.0.1

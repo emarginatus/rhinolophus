@@ -5,7 +5,8 @@
 \title{Find the pulses in a bunch of wav files and save them to rda files}
 \usage{
 wav2rda(path, te.factor = 10, channel = c("right", "left"), window.ms = 2,
-  min.contour = 10, min.peak = 20, n.fourier = 30)
+  min.peak = 20, min.amplitude = 10, delta.amplitude = 5,
+  n.fourier = 30)
 }
 \arguments{
 \item{path}{The path of the wav files. The function will reach recursive in
@@ -20,11 +21,11 @@ to 10.}
 sound in milliseconds. The time-expansion factor is taken into account.
 Defaults to 1.}
 
-\item{min.contour}{The minimum amplitude to mark the start of a pulse.
-Expressed in dB above the median amplitude of the wav file.}
+\item{min.peak}{Take only pulses into account with a maximum amplitude of at least min.peak}
 
-\item{min.peak}{The required maximum amplitude of a pulse. Pulses with a
-maximum amplitude below min.peak will be ignored.}
+\item{min.amplitude}{The minimum amplitude of the pulse}
+
+\item{delta.amplitude}{The step size in which the pulse is extracted. See details}
 
 \item{n.fourier}{The number of parameters of the Fourier Transformation to
 store per dimension. Defaults to 30.}

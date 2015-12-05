@@ -8,20 +8,18 @@
 #' @param window.ms The size of the window for fourier transformation of the
 #'    sound in milliseconds. The time-expansion factor is taken into account.
 #'    Defaults to 1.
-#' @param min.contour The minimum amplitude to mark the start of a pulse.
-#'    Expressed in dB above the median amplitude of the wav file.
-#' @param min.peak The required maximum amplitude of a pulse. Pulses with a
-#'    maximum amplitude below min.peak will be ignored.
 #' @param n.fourier The number of parameters of the Fourier Transformation to
 #'    store per dimension. Defaults to 30.
+#' @inheritParams find_pulses
 #' @importFrom assertthat assert_that is.string
 wav2rda <- function(
   path,
   te.factor = 10,
   channel = c("right", "left"),
   window.ms = 2,
-  min.contour = 10,
   min.peak = 20,
+  min.amplitude = 10,
+  delta.amplitude = 5,
   n.fourier = 30
 ){
   assert_that(is.string(path))
@@ -52,8 +50,9 @@ wav2rda <- function(
     rm(wav)
     pulses <- find_pulses(
       spectrogram = spectrogram,
-      min.contour = min.contour,
-      min.peak = min.peak
+      min.peak = min.peak,
+      min.amplitude = min.amplitude,
+      delta.amplitude = delta.amplitude
     )
     rm(spectrogram)
     pulses.fft <- fft_pulse(

@@ -2,21 +2,23 @@
 #' @param pulse a dataframe with a single pulse
 #' @importFrom assertthat assert_that has_name
 #' @importFrom dplyr %>% select_ transmute_ bind_rows arrange_ group_by_ summarise_ rowwise
-#' @importFrom sp Polygon Polygons SpatialPolygons
+#' @importFrom sp Polygon Polygons SpatialPolygons SpatialPolygonsDataFrame
 #' @export
 pulse_border <- function(pulse){
   assert_that(inherits(pulse, "batPulse"))
   assert_that(length(unique(pulse@PulseMetadata$Spectrogram)) == 1)
 
   base <- pulse@PulseMetadata %>%
-    select_(~Fingerprint, ~Xmin, ~Xmax, ~Ymin, ~Ymax) %>%
-    arrange_(~Fingerprint)
-  base$Xmin <- pulse@Spectrogram[[1]]$t[base$Xmin]
-  base$Xmax <- pulse@Spectrogram[[1]]$t[base$Xmax]
-  base$Ymin <- pulse@Spectrogram[[1]]$f[base$Ymin]
-  base$Ymax <- pulse@Spectrogram[[1]]$f[base$Ymax]
-  base <- base %>%
-    mutate_(Label = ~sprintf("%.0f ms - %.0f kHz", Xmin * 1e3, Ymin * 1e-3))
+    select_(~Fingerprint, ~Xmin, ~Xmax, ~Ymin, ~Ymax, ~DeltaAmplitude) %>%
+    arrange_(~Fingerprint) %>%
+    mutate_(
+      Label = ~sprintf(
+        "%.1f ms - %.1f kHz - %0.f dB",
+        Xmin,
+        Ymin,
+        DeltaAmplitude
+      )
+    )
   rownames(base) <- base$Fingerprint
 
   poly <- bind_rows(

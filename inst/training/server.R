@@ -70,8 +70,8 @@ shinyServer(
     pulses <- reactive({
       find_pulses(
         spectrogram = spectrogram(),
-        min.contour = as.numeric(input$amplitude[1]),
-        min.peak = as.numeric(input$amplitude[2])
+        min.peak = as.numeric(input$amplitude[2]),
+        min.amplitude = as.numeric(input$amplitude[1])
       )
     })
 
@@ -94,12 +94,12 @@ shinyServer(
       if (is.null(input$wav.file) | input$pulse == "") {
         return(NULL)
       }
-      frequency.value <- borders()@data[input$pulse, c("Ymin", "Ymax")] * 1e-3
+      frequency.value <- borders()@data[input$pulse, c("Ymin", "Ymax")]
       frequency.value <- c(
         frequency.value$Ymin - 5,
         frequency.value$Ymax + 5
       )
-      time.value <- borders()@data[input$pulse, c("Xmin", "Xmax")] * 1e3
+      time.value <- borders()@data[input$pulse, c("Xmin", "Xmax")]
       time.value <- c(
         time.value$Xmin - 5,
         time.value$Xmax + 5
@@ -130,16 +130,19 @@ shinyServer(
       }
       plot(
         spectrogram.raster(),
-        asp = 0.5e-6,
+        asp = 0.5,
         main = wav()@Metadata$Filename,
         breaks = ramp()$Breaks,
         col = ramp()$Colour,
-        xlim = input$time / 1e3,
-        ylim = input$frequency * 1e3,
-        xlab = "Time (s)",
-        ylab = "Frequency (Hz)"
+        xlim = input$time,
+        ylim = input$frequency,
+        xlab = "Time (ms)",
+        ylab = "Frequency (kHz)"
       )
       lines(borders())
+      if (input$pulse != "") {
+        lines(borders()[borders()$Fingerprint == input$pulse, ], col = "magenta")
+      }
     })
 
     truth.env <- new.env()

@@ -61,8 +61,8 @@ shinyUI(
             inputId = "time",
             label = "Display time (ms)",
             min = 0,
-            max = 200,
-            value = c(0, 200),
+            max = 2000,
+            value = c(0, 2000),
             step = 1
           )
         )

@@ -5,16 +5,16 @@ wav <- read_wav(
 spectrogram <- wav2spectrogram(wav)
 expect_is(pulses <- find_pulses(spectrogram), "batPulse")
 expect_error(
-  find_pulses(spectrogram, min.contour = "a"),
-  "min\\.contour is not a number \\(a length one numeric vector\\)\\."
+  find_pulses(spectrogram, min.amplitude = "a"),
+  "min\\.amplitude is not a number \\(a length one numeric vector\\)\\."
 )
 expect_error(
   find_pulses(spectrogram, min.peak = "a"),
   "min\\.peak is not a number \\(a length one numeric vector\\)\\."
 )
 expect_error(
-  find_pulses(spectrogram, min.contour = 10, min.peak = 0),
-  "min\\.peak not greater than min\\.contour"
+  find_pulses(spectrogram, min.amplitude = 10, min.peak = 0),
+  "min\\.peak not greater than min\\.amplitude"
 )
 expect_error(
   find_pulses("a"),

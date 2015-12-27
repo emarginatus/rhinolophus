@@ -6,7 +6,6 @@
 #' @export
 #' @importFrom assertthat assert_that is.string is.count
 #' @importFrom tuneR readWave
-#' @importFrom digest digest
 #' @examples
 #'  wav = read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
@@ -30,13 +29,12 @@ read_wav <- function(
   } else {
     selected.channel <- list(as.integer(raw.data@right))
   }
-  names(selected.channel) <- digest(
+  names(selected.channel) <- sha1(
     list(
       selected.channel[[1]],
       as.integer(te.factor),
       as.numeric(header$sample.rate * te.factor)
-    ),
-    algo = "sha1"
+    )
   )
   new(
     "batWav",

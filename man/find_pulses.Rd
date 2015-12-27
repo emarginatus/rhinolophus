@@ -5,7 +5,7 @@
 \title{Find the location of possible pulses in a spectrogram}
 \usage{
 find_pulses(spectrogram, min.peak = 20, min.amplitude = 10,
-  delta.amplitude = 5)
+  delta.amplitude = 10)
 }
 \arguments{
 \item{spectrogram}{The spectrogram}

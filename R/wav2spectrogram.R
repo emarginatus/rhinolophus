@@ -42,7 +42,7 @@ wav2spectrogram <- function(wav, window.ms = 1){
   names(spectrogram) <- sapply(
     names(wav@Wav),
     function(x){
-      digest(list(x, window.ms), algo = "sha1")
+      sha1(list(x, window.ms))
     }
   )
   metadata = data.frame(

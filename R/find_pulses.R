@@ -5,7 +5,6 @@
 #' @importFrom raster clump zonal Which xyFromCell crop focal extent
 #' @importFrom assertthat assert_that is.number
 #' @importFrom dplyr %>% filter_ rename_ mutate_ summarize_ select_ inner_join rowwise
-#' @importFrom digest digest
 #' @param spectrogram The spectrogram
 #' @param min.peak Take only pulses into account with a maximum amplitude of at least min.peak
 #' @param min.amplitude The minimum amplitude of the pulse
@@ -20,18 +19,14 @@ find_pulses <- function(
   spectrogram,
   min.peak = 20,
   min.amplitude = 10,
-  delta.amplitude = 5
+  delta.amplitude = 10
 ){
   assert_that(is.number(min.peak))
   assert_that(is.number(min.amplitude))
   assert_that(is.number(delta.amplitude))
   assert_that(delta.amplitude > 0)
-  assert_that(min.peak > min.amplitude + delta.amplitude)
+  assert_that(min.peak >= min.amplitude + delta.amplitude)
   assert_that(inherits(spectrogram, "batSpectrogram"))
-
-  sha1 <- function(x){
-    digest(x, algo = "sha1")
-  }
 
   pulses <- do.call(
     rbind,
@@ -60,6 +55,8 @@ find_pulses <- function(
                 Xmax = numeric(0),
                 Ymin = numeric(0),
                 Ymax = numeric(0),
+                Xpeak = numeric(0),
+                Ypeak = numeric(0),
                 MaxAmplitude = numeric(0),
                 DeltaAmplitude = numeric(0)
               )
@@ -124,6 +121,7 @@ find_pulses <- function(
                     next
                   }
                   working[selection] <- db[i] - step * delta.amplitude - 1
+                  peak <- xyFromCell(this.spec, candidate[i])
                   pulse <- xyFromCell(this.spec, selection) %>%
                     as.data.frame() %>%
                     summarize_(
@@ -133,6 +131,8 @@ find_pulses <- function(
                       Ymax = ~max(y)
                     ) %>%
                     mutate_(
+                      Xpeak = peak[, "x"],
+                      Ypeak = peak[, "y"],
                       MaxAmplitude = db[i],
                       DeltaAmplitude = ~step * delta.amplitude
                     ) %>%
@@ -151,7 +151,7 @@ find_pulses <- function(
           rowwise() %>%
           mutate_(
             Fingerprint = ~sha1(
-              c(Spectrogram, Xmin, Xmax, Ymin, Ymax, DeltaAmplitude)
+              c(Spectrogram, Xpeak, Ypeak, DeltaAmplitude)
             )
           ) %>%
           as.data.frame()

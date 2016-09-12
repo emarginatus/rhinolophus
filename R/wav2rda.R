@@ -17,10 +17,11 @@ wav2rda <- function(
   path,
   te.factor = 10,
   channel = c("right", "left"),
+  max.length = 1.8,
   window.ms = 2,
   min.peak = 20,
   min.amplitude = 10,
-  delta.amplitude = 5,
+  delta.amplitude = c(10, 20),
   n.fourier = 30,
   overwrite = FALSE
 ){
@@ -55,7 +56,8 @@ wav2rda <- function(
     wav <- read_wav(
       filename = filename,
       te.factor = te.factor,
-      channel = channel
+      channel = channel,
+      max.length = max.length
     )
     if (length(wav@Wav[[1]]) == 0) {
       warning(filename, " contains no information in the ", channel, " channel")

@@ -4,7 +4,8 @@
 \alias{read_wav}
 \title{read a WAV file}
 \usage{
-read_wav(filename, channel = c("left", "right"), te.factor = 10)
+read_wav(filename, channel = c("left", "right"), te.factor = 10,
+  max.length = 1.8)
 }
 \arguments{
 \item{filename}{The name of the file}
@@ -13,6 +14,10 @@ read_wav(filename, channel = c("left", "right"), te.factor = 10)
 
 \item{te.factor}{The factor to which the original sound was slowed down prior
 to recording}
+
+\item{max.length}{The maximum length to read from the wav file. The time is
+in original seconds. So te.factor = 10 and max.length = 1.8 will read the
+first 10 * 1.8 = 18 seconds from the wav file.}
 }
 \description{
 read a WAV file

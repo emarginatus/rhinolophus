@@ -4,8 +4,8 @@
 \alias{wav2rda}
 \title{Find the pulses in a bunch of wav files and save them to rda files}
 \usage{
-wav2rda(path, te.factor = 10, channel = c("right", "left"), window.ms = 2,
-  min.peak = 20, min.amplitude = 10, delta.amplitude = 5,
+wav2rda(path, te.factor = 10, channel = c("right", "left"), max.length,
+  window.ms = 2, min.peak = 20, min.amplitude = 10, delta.amplitude = 5,
   n.fourier = 30, overwrite = FALSE)
 }
 \arguments{

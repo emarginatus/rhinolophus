@@ -6,7 +6,7 @@
 \usage{
 wav2rda(path, te.factor = 10, channel = c("right", "left"), window.ms = 2,
   min.peak = 20, min.amplitude = 10, delta.amplitude = 5,
-  n.fourier = 30)
+  n.fourier = 30, overwrite = FALSE)
 }
 \arguments{
 \item{path}{The path of the wav files. The function will reach recursive in
@@ -29,6 +29,8 @@ Defaults to 1.}
 
 \item{n.fourier}{The number of parameters of the Fourier Transformation to
 store per dimension. Defaults to 30.}
+
+\item{overwrite}{Overwrite existing rda files. Defaults to FALSE}
 }
 \description{
 Find the pulses in a bunch of wav files and save them to rda files

@@ -10,8 +10,9 @@
 #'    Defaults to 1.
 #' @param n.fourier The number of parameters of the Fourier Transformation to
 #'    store per dimension. Defaults to 30.
+#' @param overwrite Overwrite existing rda files. Defaults to FALSE
 #' @inheritParams find_pulses
-#' @importFrom assertthat assert_that is.string
+#' @importFrom assertthat assert_that is.string is.flag noNA
 wav2rda <- function(
   path,
   te.factor = 10,
@@ -20,10 +21,13 @@ wav2rda <- function(
   min.peak = 20,
   min.amplitude = 10,
   delta.amplitude = 5,
-  n.fourier = 30
+  n.fourier = 30,
+  overwrite = FALSE
 ){
   assert_that(is.string(path))
   channel <- match.arg(channel)
+  assert_that(is.flag(overwrite))
+  assert_that(noNA(overwrite))
 
   filenames <- list.files(
     path = path,
@@ -32,6 +36,20 @@ wav2rda <- function(
     ignore.case = TRUE,
     full.names = TRUE
   )
+  if (!overwrite) {
+    rda_filenames <- list.files(
+      path = path,
+      pattern = "\\.rda$",
+      recursive = TRUE,
+      ignore.case = TRUE,
+      full.names = TRUE
+    ) %>%
+      gsub(pattern = "\\.rda", replacement = "")
+    filenames <- filenames[
+      !gsub("\\.(wav|WAV)$", "", filenames) %in% rda_filenames
+    ]
+  }
+
   for (filename in filenames) {
     message(filename)
     wav <- read_wav(

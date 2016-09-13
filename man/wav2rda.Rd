@@ -4,9 +4,9 @@
 \alias{wav2rda}
 \title{Find the pulses in a bunch of wav files and save them to rda files}
 \usage{
-wav2rda(path, te.factor = 10, channel = c("right", "left"), max.length,
-  window.ms = 2, min.peak = 20, min.amplitude = 10, delta.amplitude = 5,
-  n.fourier = 30, overwrite = FALSE)
+wav2rda(path, te.factor = 10, channel = c("right", "left"),
+  max.length = 1.8, window.ms = 2, min.peak = 20, min.amplitude = 10,
+  delta.amplitude = c(10, 20), n.fourier = 30, overwrite = FALSE)
 }
 \arguments{
 \item{path}{The path of the wav files. The function will reach recursive in
@@ -25,7 +25,7 @@ Defaults to 1.}
 
 \item{min.amplitude}{The minimum amplitude of the pulse}
 
-\item{delta.amplitude}{The step size in which the pulse is extracted. See details}
+\item{delta.amplitude}{The difference in amplitude between the peak of the pulse and the lowest value in the pulse.}
 
 \item{n.fourier}{The number of parameters of the Fourier Transformation to
 store per dimension. Defaults to 30.}

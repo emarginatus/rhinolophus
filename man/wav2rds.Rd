@@ -12,14 +12,16 @@ wav2rds(path, te.factor = 10, channel = c("right", "left"),
 \item{path}{The path of the wav files. The function will reach recursive in
 the subdirectories of the path.}
 
-\item{te.factor}{The time-expansion factor used in the wav files. Defaults
-to 10.}
+\item{te.factor}{The factor to which the original sound was slowed down prior
+to recording}
 
-\item{channel}{Which channel will be read. Defaults to "right".}
+\item{channel}{Select the left or the right channel}
 
-\item{window.ms}{The size of the window for fourier transformation of the
-sound in milliseconds. The time-expansion factor is taken into account.
-Defaults to 1.}
+\item{max.length}{The maximum length to read from the wav file. The time is
+in original seconds. So te.factor = 10 and max.length = 1.8 will read the
+first 10 * 1.8 = 18 seconds from the wav file.}
+
+\item{window.ms}{The size of the window in microseconds. Default to 1.}
 
 \item{min.peak}{Take only pulses into account with a maximum amplitude of at least min.peak}
 
@@ -27,8 +29,7 @@ Defaults to 1.}
 
 \item{delta.amplitude}{The difference in amplitude between the peak of the pulse and the lowest value in the pulse.}
 
-\item{n.fourier}{The number of parameters of the Fourier Transformation to
-store per dimension. Defaults to 30.}
+\item{n.fourier}{The number of required Fourier components in each direction.}
 
 \item{overwrite}{Overwrite existing rda files. Defaults to FALSE}
 }

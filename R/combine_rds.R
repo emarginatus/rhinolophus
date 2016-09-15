@@ -2,6 +2,7 @@
 #' @param path the path in which to look recursively
 #' @param keep.spectrogram TRUE keeps the spectrograms, FALSE discards them
 #' @importFrom assertthat assert_that is.string is.flag noNA
+#' @importFrom methods new
 #' @export
 combine_rds <- function(path, keep.spectrogram = FALSE){
   assert_that(is.string(path))

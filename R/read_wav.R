@@ -10,6 +10,8 @@
 #' @importFrom assertthat assert_that is.string is.count is.number
 #' @importFrom tuneR readWave
 #' @importFrom digest sha1
+#' @importFrom methods new
+#' @importFrom utils file_test
 #' @examples
 #'  wav = read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")

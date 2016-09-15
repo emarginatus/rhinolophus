@@ -2,16 +2,11 @@
 #' @export
 #' @param path The path of the wav files. The function will reach recursive in
 #'    the subdirectories of the path.
-#' @param te.factor The time-expansion factor used in the wav files. Defaults
-#'    to 10.
-#' @param channel Which channel will be read. Defaults to "right".
-#' @param window.ms The size of the window for fourier transformation of the
-#'    sound in milliseconds. The time-expansion factor is taken into account.
-#'    Defaults to 1.
-#' @param n.fourier The number of parameters of the Fourier Transformation to
-#'    store per dimension. Defaults to 30.
 #' @param overwrite Overwrite existing rda files. Defaults to FALSE
+#' @inheritParams read_wav
+#' @inheritParams wav2spectrogram
 #' @inheritParams find_pulses
+#' @inheritParams fft_pulse
 #' @importFrom assertthat assert_that is.string is.flag noNA
 wav2rds <- function(
   path,

@@ -2,6 +2,7 @@
 #' @export
 #' @importFrom sp bbox
 #' @importFrom assertthat assert_that is.count has_name
+#' @importFrom stats fft
 #' @param pulses A list of pulses. E.g. the output of \code{\link{find_pulses}}
 #' @param n.fourier The number of required Fourier components in each direction.
 #' @examples

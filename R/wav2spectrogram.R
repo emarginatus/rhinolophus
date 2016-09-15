@@ -5,6 +5,8 @@
 #' @importFrom dplyr %>% filter_ select_
 #' @importFrom signal specgram
 #' @importFrom digest sha1
+#' @importFrom methods new validObject
+#' @importFrom stats median
 #' @export
 #' @examples
 #'  wav2spectrogram(
@@ -48,7 +50,7 @@ wav2spectrogram <- function(wav, window.ms = 1){
   )
   metadata = data.frame(
     Fingerprint = names(spectrogram),
-    File = names(wav@Wav),
+    File = factor(names(wav@Wav)),
     Window = window.ms,
     stringsAsFactors = FALSE
   )

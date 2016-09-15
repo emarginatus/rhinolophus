@@ -6,6 +6,7 @@
 #' @importFrom assertthat assert_that is.number
 #' @importFrom dplyr %>% filter_ rename_ mutate_ summarize_ select_ inner_join rowwise
 #' @importFrom digest sha1
+#' @importFrom methods new
 #' @param spectrogram The spectrogram
 #' @param min.peak Take only pulses into account with a maximum amplitude of at least min.peak
 #' @param min.amplitude The minimum amplitude of the pulse
@@ -47,7 +48,7 @@ find_pulses <- function(
         local.max[, 2] >= max(min.peak, min.amplitude + delta.amplitude),
         "zone"
       ]
-      pulses <- lapply(
+      lapply(
         relevant,
         function(zone){
           pulse <- data.frame(
@@ -143,12 +144,19 @@ find_pulses <- function(
           return(pulse)
         }
       ) %>%
-        bind_rows()
-      pulses %>%
+        bind_rows() %>%
+        mutate_(
+          Spectrogram = ~factor(fingerprint)
+        ) %>%
         rowwise() %>%
         mutate_(
           Fingerprint = ~sha1(
-            c(Spectrogram, Xpeak, Ypeak, DeltaAmplitude)
+            list(
+              Spectrogram = fingerprint,
+              Xpeak = Xpeak,
+              Ypeak = Ypeak,
+              DeltaAmplitude = DeltaAmplitude
+            )
           )
         ) %>%
         as.data.frame()

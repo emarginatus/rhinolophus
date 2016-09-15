@@ -5,6 +5,9 @@
 #' @param times Limits of time
 #' @param frequencies Limits of frequencies
 #' @param reference Frequecies of reference lines to plot
+#' @importFrom grDevices rainbow
+#' @importFrom graphics plot segments abline
+#' @importFrom utils tail
 plotpattern <- function(plotdata, amplitudes, times, frequencies, reference = c(30, 40, 45, 50, 55) * 1e3){
   if(is.null(plotdata)){
     return()

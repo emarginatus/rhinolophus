@@ -5,6 +5,8 @@
 #' @param plot.it Should the reconstructed pulse be plotted?
 #' @param asp The aspect ratio
 #' @importFrom raster raster
+#' @importFrom graphics plot
+#' @importFrom stats fft
 reconstruct.pulse <- function(pulse.fft, local.time = TRUE, plot.it = TRUE, asp = 0.5){
   fft.coefs <- matrix(0, nrow = pulse.fft$fft.dim[1], ncol = pulse.fft$fft.dim[2])
   max.dim <- pmin(dim(pulse.fft$fft), pulse.fft$fft.dim)

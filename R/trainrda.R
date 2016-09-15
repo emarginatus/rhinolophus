@@ -2,6 +2,7 @@
 #' @export
 #' @import kohonen
 #' @importFrom class somgrid
+#' @importFrom stats model.matrix
 #' @param pattern A matrix with patterns
 #' @param truth A data.frame with the truth
 trainrda <- function(pattern, truth){

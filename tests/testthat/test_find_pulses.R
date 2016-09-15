@@ -14,7 +14,7 @@ expect_error(
 )
 expect_error(
   find_pulses(spectrogram, min.amplitude = 10, min.peak = 0),
-"min\\.peak not greater than or equal to min\\.amplitude \\+ delta\\.amplitude"
+"min\\.peak not greater than or equal to min\\.amplitude \\+ min\\(delta\\.amplitude\\)"
 )
 expect_error(
   find_pulses("a"),

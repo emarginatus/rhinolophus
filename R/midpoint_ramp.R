@@ -4,6 +4,8 @@
 #' @param mid.point the midpoint of the colour ramp
 #' @param n the approximate number of breaks
 #' @importFrom assertthat assert_that is.number is.count
+#' @importFrom grDevices colorRampPalette
+#' @importFrom utils head tail
 midpoint_ramp <- function(x, mid.point = c(10, 20), n = 20){
   assert_that(inherits(x, "RasterLayer"))
   assert_that(is.number(mid.point))

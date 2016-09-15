@@ -4,6 +4,7 @@
 #' @importFrom assertthat assert_that has_name is.number
 #' @importFrom dplyr %>% filter_ select_
 #' @importFrom signal specgram
+#' @importFrom digest sha1
 #' @export
 #' @examples
 #'  wav2spectrogram(
@@ -47,7 +48,7 @@ wav2spectrogram <- function(wav, window.ms = 1){
   )
   metadata = data.frame(
     Fingerprint = names(spectrogram),
-    File = factor(names(wav@Wav)),
+    File = names(wav@Wav),
     Window = window.ms,
     stringsAsFactors = FALSE
   )

@@ -3,14 +3,14 @@
 #' @param keep.spectrogram TRUE keeps the spectrograms, FALSE discards them
 #' @importFrom assertthat assert_that is.string is.flag noNA
 #' @export
-combine_rda <- function(path, keep.spectrogram = FALSE){
+combine_rds <- function(path, keep.spectrogram = FALSE){
   assert_that(is.string(path))
   assert_that(is.flag(keep.spectrogram))
   assert_that(noNA(keep.spectrogram))
 
   filenames <- list.files(
     path = path,
-    pattern = "\\.rda$",
+    pattern = "\\.rds$",
     recursive = TRUE,
     ignore.case = TRUE,
     full.names = TRUE
@@ -19,7 +19,7 @@ combine_rda <- function(path, keep.spectrogram = FALSE){
   pulse.list <- lapply(
     filenames,
     function(filename){
-      load(filename)
+      pulses.fft <- readRDS(filename)
       if (!keep.spectrogram) {
         pulses.fft@Spectrogram <- list()
       }
@@ -27,52 +27,53 @@ combine_rda <- function(path, keep.spectrogram = FALSE){
     }
   )
 
-  metadata <- do.call(
-    rbind,
-    lapply(
-      pulse.list,
-      function(x){
-        x@Metadata
-      }
-    )
-  )
-  pulse.metadata <- do.call(
-    rbind,
-    lapply(
-      pulse.list,
-      function(x){
-        x@PulseMetadata
-      }
-    )
-  )
-  spectrogram.metadata <- do.call(
-    rbind,
-    lapply(
-      pulse.list,
-      function(x){
-        x@SpectrogramMetadata
-      }
-    )
-  )
-  pulse.fourier <- do.call(
-    c,
-    lapply(
-      pulse.list,
-      function(x){
-        x@PulseFourier
-      }
-    )
-  )
+  metadata <- lapply(
+    pulse.list,
+    function(x){
+      x@Metadata
+    }
+  ) %>%
+    bind_rows()
+
+
+  pulse.metadata <- lapply(
+    pulse.list,
+    function(x){
+      y <- x@PulseMetadata
+      y$Spectrogram <- levels(y$Spectrogram)[y$Spectrogram]
+      return(y)
+    }
+  ) %>%
+    bind_rows() %>%
+    mutate_(Spectrogram = ~factor(Spectrogram))
+
+  spectrogram.metadata <- lapply(
+    pulse.list,
+    function(x){
+      y <- x@SpectrogramMetadata
+      y$File <- levels(y$File)[1]
+      return(y)
+    }
+  ) %>%
+    bind_rows() %>%
+    mutate_(File = ~factor(File))
+
+  pulse.fourier <- lapply(
+    pulse.list,
+    function(x){
+      x@PulseFourier
+    }
+  ) %>%
+    do.call(what = c)
+
   if (keep.spectrogram) {
-    spectrogram <- do.call(
-      c,
-      lapply(
-        pulse.list,
-        function(x){
-          x@Spectrogram
-        }
-      )
-    )
+    spectrogram <- lapply(
+      pulse.list,
+      function(x){
+        x@Spectrogram
+      }
+    ) %>%
+      do.call(what = c)
   } else {
     spectrogram <- list()
   }

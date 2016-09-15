@@ -5,6 +5,7 @@
 #' @importFrom raster clump zonal Which xyFromCell crop focal extent
 #' @importFrom assertthat assert_that is.number
 #' @importFrom dplyr %>% filter_ rename_ mutate_ summarize_ select_ inner_join rowwise
+#' @importFrom digest sha1
 #' @param spectrogram The spectrogram
 #' @param min.peak Take only pulses into account with a maximum amplitude of at least min.peak
 #' @param min.amplitude The minimum amplitude of the pulse
@@ -144,9 +145,6 @@ find_pulses <- function(
       ) %>%
         bind_rows()
       pulses %>%
-        mutate_(
-          Spectrogram = ~factor(fingerprint)
-        ) %>%
         rowwise() %>%
         mutate_(
           Fingerprint = ~sha1(

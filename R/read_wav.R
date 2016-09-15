@@ -9,6 +9,7 @@
 #' @export
 #' @importFrom assertthat assert_that is.string is.count is.number
 #' @importFrom tuneR readWave
+#' @importFrom digest sha1
 #' @examples
 #'  wav = read_wav(
 #'    system.file("demo_wav/leislers.wav", package = "rhinolophus")
@@ -45,7 +46,7 @@ read_wav <- function(
       selected.channel[[1]],
       as.integer(te.factor),
       as.numeric(header$sample.rate * te.factor),
-      as.numeric(te.factor * max.length)
+      as.numeric(max.length)
     )
   )
   new(

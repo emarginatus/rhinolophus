@@ -13,7 +13,7 @@
 #' @param overwrite Overwrite existing rda files. Defaults to FALSE
 #' @inheritParams find_pulses
 #' @importFrom assertthat assert_that is.string is.flag noNA
-wav2rda <- function(
+wav2rds <- function(
   path,
   te.factor = 10,
   channel = c("right", "left"),
@@ -40,14 +40,14 @@ wav2rda <- function(
   if (!overwrite) {
     rda_filenames <- list.files(
       path = path,
-      pattern = "\\.rda$",
+      pattern = "\\.rds$",
       recursive = TRUE,
       ignore.case = TRUE,
       full.names = TRUE
     ) %>%
-      gsub(pattern = "\\.rda", replacement = "")
+      gsub(pattern = "\\.rds", replacement = "", ignore.case = TRUE)
     filenames <- filenames[
-      !gsub("\\.(wav|WAV)$", "", filenames) %in% rda_filenames
+      !gsub("\\.wav$", "", filenames, ignore.case = TRUE) %in% rda_filenames
     ]
   }
 
@@ -80,9 +80,9 @@ wav2rda <- function(
       n.fourier = n.fourier
     )
     rm(pulses)
-    save(
+    saveRDS(
       pulses.fft,
-      file = gsub("\\.(WAV|wav)$", ".rda", filename)
+      file = gsub("\\.wav$", ".rds", filename, ignore.case = TRUE)
     )
     rm(pulses.fft)
     gc()

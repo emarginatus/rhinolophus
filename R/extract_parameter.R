@@ -26,9 +26,8 @@ extract_pattern <- function(object, n.part = 5){
         as.data.frame() %>%
         add_rownames("X") %>%
         gather_("Y", "Complex", sprintf("V%i", seq_len(this.dims[2]))) %>%
-        mutate_(X = ~as.integer(X), Y = ~as.integer(gsub("^V", "", Y)))
-      long <- complete %>%
-        left_join(long, by = c("X", "Y")) %>%
+        mutate_(X = ~as.integer(X), Y = ~as.integer(gsub("^V", "", Y))) %>%
+        left_join(complete, by = c("X", "Y")) %>%
         transmute_(
           NameRe = ~sprintf("Re_%02i_%02i", X, Y),
           NameIm = ~sprintf("Im_%02i_%02i", X, Y),

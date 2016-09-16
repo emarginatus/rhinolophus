@@ -48,6 +48,23 @@ find_pulses <- function(
         local.max[, 2] >= max(min.peak, min.amplitude + delta.amplitude),
         "zone"
       ]
+      if (length(relevant) == 0) {
+        return(
+          data.frame(
+            Xmin = numeric(0),
+            Xmax = numeric(0),
+            Ymin = numeric(0),
+            Ymax = numeric(0),
+            Xpeak = numeric(0),
+            Ypeak = numeric(0),
+            MaxAmplitude = numeric(0),
+            DeltaAmplitude = numeric(0),
+            Fingerprint = character(0),
+            Spectrogram = factor(character(0)),
+            stringsAsFactors = FALSE
+          )
+        )
+      }
       lapply(
         relevant,
         function(zone){

@@ -10,7 +10,8 @@ setClass(
   "batPulse",
   representation = representation(
     PulseMetadata = "data.frame",
-    PulseFourier = "list"
+    PulseFourier = "list",
+    PulseVoxel = "data.frame"
   ),
   contains = "batSpectrogram",
   prototype = prototype(
@@ -25,7 +26,14 @@ setClass(
       DeltaAmplitude = numeric(0),
       stringsAsFactors = FALSE
     ),
-    PulseFourier = list()
+    PulseFourier = list(),
+    PulseVoxel = data.frame(
+      Fingerprint = factor(character(0)),
+      x = integer(0),
+      y = integer(0),
+      dB = integer(0),
+      n = integer(0)
+    )
   )
 )
 
@@ -58,6 +66,12 @@ setValidity(
     assert_that(
       all(
         names(object@PulseFourier$Spectrogram) %in%
+          object@PulseMetadata$Fingerprint
+      )
+    )
+    assert_that(
+      all(
+        levels(object@PulseVoxel$Fingerprint) %in%
           object@PulseMetadata$Fingerprint
       )
     )

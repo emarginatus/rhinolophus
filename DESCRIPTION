@@ -46,6 +46,7 @@ Collate:
     'sample_pulse.R'
     'spectrogram_raster.R'
     'trainrda.R'
+    'voxel_pulse.R'
     'wav2rds.R'
     'wav2spectrogram.R'
 RoxygenNote: 5.0.1

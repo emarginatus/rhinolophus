@@ -38,7 +38,7 @@ wav2spectrogram <- function(wav, window.ms = 1){
         overlap = ceiling(0.9 * window.n)
       )
       spectrogram$S <- 20 * log10(abs(spectrogram$S))
-      spectrogram$S <- spectrogram$S - median(spectrogram$S)
+      spectrogram$S <- spectrogram$S - median(colMeans(spectrogram$S))
       return(spectrogram)
     }
   )

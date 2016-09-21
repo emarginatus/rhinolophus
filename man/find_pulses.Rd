@@ -4,8 +4,8 @@
 \alias{find_pulses}
 \title{Find the location of possible pulses in a spectrogram}
 \usage{
-find_pulses(spectrogram, min.peak = 20, min.amplitude = 10,
-  delta.amplitude = c(10, 20))
+find_pulses(spectrogram, min.peak = 40, min.amplitude = 10,
+  delta.amplitude = 10)
 }
 \arguments{
 \item{spectrogram}{The spectrogram}
@@ -17,7 +17,7 @@ find_pulses(spectrogram, min.peak = 20, min.amplitude = 10,
 \item{delta.amplitude}{The difference in amplitude between the peak of the pulse and the lowest value in the pulse.}
 }
 \description{
-The pulses are extracted in steps of \code{delta.amplitude}. Suppose \code{delta.amplitude = 5} and \code{min.amplitude = 10}. The maximum amplitude of the current pulse is \code{max.amplitude = 43.6}. Then the pulse will be extracted with lower bounds of amplitude of \code{c(38.6, 33.6, 28.6, 23.6, 18.6, 13.6)}.
+Find the location of possible pulses in a spectrogram
 }
 \examples{
  wav <- read_wav(

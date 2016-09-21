@@ -14,9 +14,9 @@ wav2rds <- function(
   channel = c("right", "left"),
   max.length = 1.8,
   window.ms = 2,
-  min.peak = 20,
+  min.peak = 40,
   min.amplitude = 10,
-  delta.amplitude = c(10, 20),
+  delta.amplitude = 30,
   n.fourier = 30,
   overwrite = FALSE
 ){

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fft_pulse.R
 \name{fft_pulse}
 \alias{fft_pulse}
-\title{Calculate the fast fourier transformation for each pulse}
+\title{Calculate the fast Fourier transformation for each pulse}
 \usage{
 fft_pulse(pulses, n.fourier = 30)
 }
@@ -12,7 +12,7 @@ fft_pulse(pulses, n.fourier = 30)
 \item{n.fourier}{The number of required Fourier components in each direction.}
 }
 \description{
-Calculate the fast fourier transformation for each pulse
+Calculate the fast Fourier transformation for each pulse
 }
 \examples{
 wav <- read_wav(

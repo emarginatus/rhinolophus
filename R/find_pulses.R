@@ -1,6 +1,5 @@
 #' Find the location of possible pulses in a spectrogram
 #'
-#' The pulses are extracted in steps of \code{delta.amplitude}. Suppose \code{delta.amplitude = 5} and \code{min.amplitude = 10}. The maximum amplitude of the current pulse is \code{max.amplitude = 43.6}. Then the pulse will be extracted with lower bounds of amplitude of \code{c(38.6, 33.6, 28.6, 23.6, 18.6, 13.6)}.
 #' @export
 #' @importFrom raster clump zonal Which xyFromCell crop focal extent
 #' @importFrom assertthat assert_that is.number
@@ -19,19 +18,16 @@
 #'  find_pulses(spectrogram)
 find_pulses <- function(
   spectrogram,
-  min.peak = 20,
+  min.peak = 40,
   min.amplitude = 10,
-  delta.amplitude = c(10, 20)
+  delta.amplitude = 10
 ){
   assert_that(is.number(min.peak))
   assert_that(is.number(min.amplitude))
-  assert_that(is.numeric(delta.amplitude) | is.integer(delta.amplitude))
-  assert_that(length(delta.amplitude) > 0)
-  assert_that(noNA(delta.amplitude))
-  assert_that(all(delta.amplitude > 0))
-  assert_that(min.peak >= min.amplitude + min(delta.amplitude))
+  assert_that(is.number(delta.amplitude))
+  assert_that(delta.amplitude > 0)
+  assert_that(min.peak >= min.amplitude + delta.amplitude)
   assert_that(inherits(spectrogram, "batSpectrogram"))
-  delta.amplitude <- sort(unique(delta.amplitude))
 
   pulses <- lapply(
     names(spectrogram@Spectrogram),
@@ -45,7 +41,7 @@ find_pulses <- function(
       )
       local.max <- zonal(spectrogram.raster, candidate.zone, fun = max)
       relevant <- local.max[
-        local.max[, 2] >= max(min.peak, min.amplitude + delta.amplitude),
+        local.max[, 2] >= max(min.peak, min.amplitude + min(delta.amplitude)),
         "zone"
       ]
       if (length(relevant) == 0) {
@@ -84,7 +80,7 @@ find_pulses <- function(
           this.spec <- crop(spectrogram.raster, extent(xy))
           this.zone <- crop(this.zone, extent(xy))
           this.spec[is.na(this.zone) | this.zone == 0] <- -Inf
-          this.max <- focal(this.spec, matrix(1, ncol = 5, nrow = 5), max)
+          this.max <- focal(this.spec, matrix(1, ncol = 7, nrow = 7), max)
           candidate <- Which(
             this.spec == this.max & is.finite(this.spec),
             cells = TRUE
@@ -100,63 +96,60 @@ find_pulses <- function(
           candidate <- candidate[relevant.peak]
           db <- db[relevant.peak]
 
-          n.step <- floor(max(db) / delta.amplitude)
-          for (step in delta.amplitude) {
-            to.low <- which(db < (min.amplitude + step))
-            if (length(to.low) > 0) {
-              db <- db[-to.low]
-              candidate <- candidate[-to.low]
+          to.low <- which(db < (min.amplitude + delta.amplitude))
+          if (length(to.low) > 0) {
+            db <- db[-to.low]
+            candidate <- candidate[-to.low]
+          }
+          if (length(candidate) == 0) {
+            return(pulse)
+          }
+          working <- this.spec
+          i <- 1
+          while (i <= length(candidate)) {
+            minimum.contour <- clump(
+              working >= (db[i] - delta.amplitude),
+              directions = 4
+            )
+            local.zone <- minimum.contour[candidate[i]]
+            selection <- Which(
+              minimum.contour == local.zone,
+              cells = TRUE
+            )
+            same.zone <- i +
+              which(minimum.contour[candidate[-seq_len(i)]] == local.zone)
+            if (length(same.zone) > 0) {
+              candidate <- candidate[-same.zone]
+              db <- db[-same.zone]
             }
-            if (length(candidate) == 0) {
-              break
-            }
-            working <- this.spec
-            i <- 1
-            while (i <= length(candidate)) {
-              minimum.contour <- clump(
-                working >= (db[i] - step),
-                directions = 4
+            if (
+              any(
+                minimum.contour[candidate[seq_len(i - 1)]] == local.zone,
+                na.rm = TRUE
               )
-              local.zone <- minimum.contour[candidate[i]]
-              selection <- Which(
-                minimum.contour == local.zone,
-                cells = TRUE
-              )
-              same.zone <- i +
-                which(minimum.contour[candidate[-seq_len(i)]] == local.zone)
-              if (length(same.zone) > 0) {
-                candidate <- candidate[-same.zone]
-                db <- db[-same.zone]
-              }
-              if (
-                any(
-                  minimum.contour[candidate[seq_len(i - 1)]] == local.zone,
-                  na.rm = TRUE
-                )
-              ) {
-                candidate <- candidate[-i]
-                db <- db[-i]
-                next
-              }
-              working[selection] <- db[i] - step - 1
-              peak <- xyFromCell(this.spec, candidate[i])
-              pulse <- xyFromCell(this.spec, selection) %>%
-                as.data.frame() %>%
-                summarize_(
-                  Xmin = ~min(x),
-                  Xmax = ~max(x),
-                  Ymin = ~min(y),
-                  Ymax = ~max(y)
-                ) %>%
-                mutate_(
-                  Xpeak = peak[, "x"],
-                  Ypeak = peak[, "y"],
-                  MaxAmplitude = db[i],
-                  DeltaAmplitude = ~step
-                ) %>%
-                bind_rows(pulse)
-              i <- i + 1
+            ) {
+              candidate <- candidate[-i]
+              db <- db[-i]
+              next
             }
+            working[selection] <- db[i] - delta.amplitude - 1
+            peak <- xyFromCell(this.spec, candidate[i])
+            pulse <- xyFromCell(this.spec, selection) %>%
+              as.data.frame() %>%
+              summarize_(
+                Xmin = ~min(x),
+                Xmax = ~max(x),
+                Ymin = ~min(y),
+                Ymax = ~max(y)
+              ) %>%
+              mutate_(
+                Xpeak = peak[, "x"],
+                Ypeak = peak[, "y"],
+                MaxAmplitude = db[i],
+                DeltaAmplitude = ~delta.amplitude
+              ) %>%
+              bind_rows(pulse)
+            i <- i + 1
           }
           return(pulse)
         }

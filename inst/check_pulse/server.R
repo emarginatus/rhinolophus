@@ -33,15 +33,14 @@ shinyServer(function(input, output) {
     spectrogram_raster(pulses()@Spectrogram[[1]])
   })
 
-  output$filename <- renderText(filename())
-
   output$plot <- renderPlot({
     if (is.null(pulses())) {
       return(character(0))
     }
     plot(
       spectrogram(),
-      asp = 0.5
+      asp = 0.5,
+      main = pulses()@Metadata$Filename
     )
   })
 })

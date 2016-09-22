@@ -18,8 +18,7 @@ shinyUI(fluidPage(
     ),
 
     mainPanel(
-      verbatimTextOutput("filename"),
-      plotOutput("plot")
+      plotOutput("plot", height = "800px")
     )
   )
 ))

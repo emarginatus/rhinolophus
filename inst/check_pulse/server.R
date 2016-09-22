@@ -9,13 +9,17 @@ shinyServer(function(input, output) {
       if (is.null(input$path)) {
         return("")
       }
-      list.files(
+      if (file_test("-f", paste0(input$new.path, "/_truth.rds"))) {
+        truth <- readRDS(paste0(input$new.path, "/_truth.rds"))
+      }
+      to.do <- list.files(
         input$path,
         pattern = "\\.rds$",
         full.names = TRUE,
         recursive = TRUE,
         ignore.case = TRUE
-      ) %>%
+      )
+      to.do[!grepl("_truth\\.rds$", to.do)] %>%
         sample(1)
   })
 
@@ -24,6 +28,12 @@ shinyServer(function(input, output) {
       return(NULL)
     }
     readRDS(file = filename())
+  })
+
+  this.pulse <- reactive({pulses()@PulseMetadata[1, ]})
+
+  borders <- reactive({
+    pulse_border(pulses())
   })
 
   spectrogram <- reactive({
@@ -40,7 +50,12 @@ shinyServer(function(input, output) {
     plot(
       spectrogram(),
       asp = 0.5,
-      main = pulses()@Metadata$Filename
-    )
+      main = pulses()@Metadata$Filename,
+      xlim = c(this.pulse()$Xmin, this.pulse()$Xmax),
+      ylim = c(this.pulse()$Ymin, this.pulse()$Ymax),
+      xlab = "Time (ms)",
+      ylab = "Frequency (kHz)"
+  )
+    lines(borders())
   })
 })

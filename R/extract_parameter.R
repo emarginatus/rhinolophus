@@ -3,57 +3,79 @@
 #' @param n.part the number of Fourier dimensions
 #' @export
 #' @importFrom assertthat assert_that is.count
-#' @importFrom dplyr %>% add_rownames mutate_ left_join transmute_ inner_join select_
-#' @importFrom tidyr gather_
-extract_pattern <- function(object, n.part = 5){
+#' @importFrom dplyr %>% mutate_ select_ rowwise do_ inner_join
+#' @importFrom tidyr unnest_
+extract_parameter <- function(object, n.part = 5){
   assert_that(inherits(object, "batPulse"))
   assert_that(is.count(n.part))
 
-  complete <- expand.grid(
-    X = seq_len(n.part),
-    Y = seq_len(n.part)
-  )
-  fft <- t(sapply(
-    names(object@PulseFourier),
-    function(fingerprint){
-      this.dims <- pmin(n.part, dim(object@PulseFourier[[fingerprint]]))
-      long <- object@PulseFourier[[
-        fingerprint
-      ]][
-        seq_len(this.dims[1]),
-        seq_len(this.dims[2])
-      ] %>%
-        as.data.frame() %>%
-        add_rownames("X") %>%
-        gather_("Y", "Complex", sprintf("V%i", seq_len(this.dims[2]))) %>%
-        mutate_(X = ~as.integer(X), Y = ~as.integer(gsub("^V", "", Y))) %>%
-        left_join(complete, by = c("X", "Y")) %>%
-        transmute_(
-          NameRe = ~sprintf("Re_%02i_%02i", X, Y),
-          NameIm = ~sprintf("Im_%02i_%02i", X, Y),
-          Re = ~ifelse(is.na(Complex), 0, Re(Complex)),
-          Im = ~ifelse(is.na(Complex), 0, Im(Complex))
-        )
-      result <- c(long$Re, long$Im)
-      names(result) <- c(long$NameRe, long$NameIm)
-      return(result)
-    }
-  ))
+  resolution <- 1 / c(0.5, 0.5)
+
+  box <- object@PulseMetadata %>%
+    mutate_(
+      S = ~(Xmax - Xmin) * resolution[1],
+      S = ~pmin(next_power_2(S), 256),
+      SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
+    )
+  while (any(box$SY > 1)) {
+    box <- box %>%
+      mutate_(
+        S = ~ifelse(SY == 1, S, S * 2),
+        SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
+      )
+  }
+  box <- box %>%
+    mutate_(
+      BYmin = ~floor(Ymin * resolution[2] / S) * S / resolution[2],
+      BYmax = ~ceiling(Ymax * resolution[2] / S) * S / resolution[2]
+    ) %>%
+    select_(~Fingerprint, ~S, ~BYmin, ~DeltaAmplitude)
+
   object@PulseMetadata %>%
-    transmute_(
-      ~Fingerprint,
-      ~Ratio,
-      ~AmplitudeMin,
-      ~AmplitudeMax,
-      Pulsduration = ~(Xmax - Xmin) * DeltaTime,
-      MinFrequency = ~Xmin * DeltaFrequency,
-      DeltaFrequency = ~(Xmax - Xmin) * DeltaFrequency
+    rowwise() %>%
+    do_(
+      Parameter = ~extract_pulse(
+        fingerprint = .$Fingerprint,
+        object = object,
+        n.part = n.part
+      )
     ) %>%
-    inner_join(
-      fft %>%
-        as.data.frame() %>%
-        add_rownames("Fingerprint"),
-      by = "Fingerprint"
+    unnest_("Parameter") %>%
+    inner_join(x = box, by = "Fingerprint")
+}
+
+#' @importFrom dplyr %>% mutate_ select_ filter_ arrange_
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr gather_ spread_
+extract_pulse <- function(fingerprint, object, n.part){
+  fft <- object@PulseFourier[[fingerprint]] %>%
+    as.data.frame()
+  fft %>%
+    rownames_to_column(var = "X") %>%
+    gather_(key_col = "Y", value_col = "Complex", colnames(fft)) %>%
+    mutate_(
+      X = ~as.integer(X),
+      Y = ~gsub("^V", "", Y) %>%
+        as.integer(),
+      Re = ~Re(Complex),
+      Im = ~Im(Complex),
+      Level = ~pmax(X, Y)
     ) %>%
-    select_(~-Im_01_01)
+    filter_(~Level <= n.part) %>%
+    gather_(
+      key_col = "Part",
+      value_col = "Size",
+      gather_cols = c("Re", "Im"),
+      factor = TRUE
+    ) %>%
+    filter_(~X != 1 | Y != 1 | Part != "Im") %>%
+    mutate_() %>%
+    arrange_(~Level, ~X, ~Y, ~Part) %>%
+    mutate_(
+      Name = ~sprintf("%s%02i_%02i_%02i", Part, Level, X, Y),
+      Name = ~factor(Name, levels = Name),
+      Fingerprint = ~fingerprint
+    ) %>%
+    select_(~Fingerprint, ~Name, ~Size) %>%
+    spread_(key_col = "Name", value_col = "Size")
 }

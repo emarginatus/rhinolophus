@@ -31,6 +31,7 @@ Collate:
     'batPulse_class.R'
     'batWav_class.R'
     'batpulse_rda2list.R'
+    'calculate_box.R'
     'combine_rds.R'
     'ensemble_predict.R'
     'extract_parameter.R'

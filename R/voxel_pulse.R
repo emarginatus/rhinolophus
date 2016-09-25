@@ -16,32 +16,12 @@ voxel_pulse <- function(pulses){
   if (nrow(pulses@PulseMetadata) == 0) {
     return(pulses)
   }
-  box <- pulses@PulseMetadata %>%
-    mutate_(
-      S = ~(Xmax - Xmin) * resolution[1],
-      S = ~next_power_2(S),
-      SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
-    )
-  while (any(box$SY > 1)) {
-    box <- box %>%
-      mutate_(
-        S = ~ifelse(SY == 1, S, S * 2),
-        SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
-      )
-  }
-  box <- box %>%
-    mutate_(
-      BXmin = ~(Xmax + Xmin) / 2 - 0.5 * S / resolution[1],
-      BXmax = ~BXmin + S / resolution[1],
-      BYmin = ~floor(Ymin * resolution[2] / S) * S / resolution[2],
-      BYmax = ~ceiling(Ymax * resolution[2] / S) * S / resolution[2]
-    ) %>%
-    select_(~-SY)
 
   spectrogram.raster <- spectrogram_raster(
     pulses@Spectrogram[[1]]
   )
-  voxel <- box %>%
+  voxel <- pulses %>%
+    calculate_box() %>%
     rowwise() %>%
     do_(
       Voxel = ~interpolate_voxel(

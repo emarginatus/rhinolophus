@@ -30,11 +30,15 @@ shinyServer(function(input, output) {
     readRDS(file = filename())
   })
 
-  this.pulse <- reactive({pulses()@PulseMetadata[1, ]})
-
   borders <- reactive({
     pulse_border(pulses())
   })
+
+  boxes <- reactive({
+    calculate_box(pulses())
+  })
+
+  this.pulse <- reactive({boxes()[1, ]})
 
   spectrogram <- reactive({
     if (is.null(pulses())) {
@@ -51,8 +55,8 @@ shinyServer(function(input, output) {
       spectrogram(),
       asp = 0.5,
       main = pulses()@Metadata$Filename,
-      xlim = c(this.pulse()$Xmin, this.pulse()$Xmax),
-      ylim = c(this.pulse()$Ymin, this.pulse()$Ymax),
+      xlim = c(this.pulse()$BXmin, this.pulse()$BXmax),
+      ylim = c(this.pulse()$BYmin, this.pulse()$BYmax),
       xlab = "Time (ms)",
       ylab = "Frequency (kHz)"
   )

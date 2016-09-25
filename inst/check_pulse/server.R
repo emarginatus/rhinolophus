@@ -9,18 +9,33 @@ shinyServer(function(input, output) {
       if (is.null(input$path)) {
         return("")
       }
-      if (file_test("-f", paste0(input$new.path, "/_truth.rds"))) {
-        truth <- readRDS(paste0(input$new.path, "/_truth.rds"))
+      if (file_test("-f", paste0(input$path, "/_truth.rds"))) {
+        truth <- readRDS(paste0(input$path, "/_truth.rds"))
+      } else {
+        n.pulse <- input$path %>%
+          list.files(
+            pattern = "\\.rds$",
+            full.names = TRUE,
+            recursive = TRUE,
+            ignore.case = TRUE
+          ) %>%
+          sapply(
+            function(this.filename){
+              readRDS(this.filename) %>%
+                "@"("PulseMetadata") %>%
+                nrow()
+            }
+          )
+        truth <- list(
+          files = data.frame(
+            filename = names(n.pulse),
+            pulses = unname(n.pulse),
+            stringsAsFactors = FALSE
+          )
+        )
+        saveRDS(truth, file = paste0(input$path, "/_truth.rds"))
       }
-      to.do <- list.files(
-        input$path,
-        pattern = "\\.rds$",
-        full.names = TRUE,
-        recursive = TRUE,
-        ignore.case = TRUE
-      )
-      to.do[!grepl("_truth\\.rds$", to.do)] %>%
-        sample(1)
+      sample(truth[["files"]]$filename, 1, prob = truth[["files"]]$pulses)
   })
 
   pulses <- reactive({

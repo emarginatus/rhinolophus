@@ -68,7 +68,7 @@ shinyServer(function(input, output) {
     }
     plot(
       spectrogram(),
-      asp = 0.5,
+      asp = 0.75,
       main = pulses()@Metadata$Filename,
       xlim = c(this.pulse()$BXmin, this.pulse()$BXmax),
       ylim = c(this.pulse()$BYmin, this.pulse()$BYmax),
@@ -76,5 +76,6 @@ shinyServer(function(input, output) {
       ylab = "Frequency (kHz)"
   )
     lines(borders())
+    points(this.pulse()$Xpeak, this.pulse()$Ypeak, col = "magenta")
   })
 })

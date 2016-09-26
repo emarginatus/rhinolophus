@@ -3,79 +3,177 @@ library(dplyr)
 library(raster)
 library(rhinolophus)
 
-shinyServer(function(input, output) {
-  filename <- eventReactive(
+shinyServer(function(input, output, session) {
+  v <- reactiveValues(
+    truth = NULL,
+    current = NULL,
+    pulses = NULL,
+    borders = NULL,
+    boxes = NULL
+  )
+
+  observeEvent(
     input$new.path, {
       if (is.null(input$path)) {
-        return("")
+        return(NULL)
       }
       if (file_test("-f", paste0(input$path, "/_truth.rds"))) {
-        truth <- readRDS(paste0(input$path, "/_truth.rds"))
+        v$truth <- readRDS(paste0(input$path, "/_truth.rds"))
+        updateRadioButtons(
+          session = session,
+          inputId = "species",
+          choices = sort(unique(c("noise", na.omit(v$truth$Species))))
+        )
+        updateRadioButtons(
+          session = session,
+          inputId = "type",
+          choices = sort(unique(
+            c("call", na.omit(v$truth$Type))
+          ))
+        )
       } else {
-        n.pulse <- input$path %>%
+        v$truth <- input$path %>%
           list.files(
             pattern = "\\.rds$",
             full.names = TRUE,
             recursive = TRUE,
             ignore.case = TRUE
           ) %>%
-          sapply(
+          lapply(
             function(this.filename){
-              readRDS(this.filename) %>%
-                "@"("PulseMetadata") %>%
-                nrow()
+              rds <- readRDS(this.filename)
+              rds@PulseMetadata %>%
+                select_(~Spectrogram, ~Fingerprint) %>%
+                inner_join(
+                  rds@SpectrogramMetadata %>%
+                    mutate_(Fingerprint = ~factor(Fingerprint)),
+                  by = c("Spectrogram" = "Fingerprint")
+                ) %>%
+                inner_join(
+                  rds@Metadata %>%
+                    mutate_(Fingerprint = ~factor(Fingerprint)),
+                  by = c("File" = "Fingerprint")
+                ) %>%
+                transmute_(
+                  File = ~gsub("\\.wav$", "\\.rds", Filename, ignore.case = TRUE),
+                  ~Fingerprint,
+                  Species = NA_character_,
+                  Type = NA_character_,
+                  SecondOption = NA
+                )
             }
-          )
-        truth <- list(
-          files = data.frame(
-            filename = names(n.pulse),
-            pulses = unname(n.pulse),
-            stringsAsFactors = FALSE
-          )
-        )
-        saveRDS(truth, file = paste0(input$path, "/_truth.rds"))
+          ) %>%
+          bind_rows()
+        saveRDS(v$truth, file = paste0(input$path, "/_truth.rds"))
       }
-      sample(truth[["files"]]$filename, 1, prob = truth[["files"]]$pulses)
-  })
-
-  pulses <- reactive({
-    if (filename() == "") {
-      return(NULL)
+      v$filename <- v$truth %>%
+        filter_(~is.na(Species)) %>%
+        sample_n(1) %>%
+        '[['("File")
+      v$pulses <- readRDS(v$filename)
+      v$spectrogram <- spectrogram_raster(v$pulses@Spectrogram[[1]])
+      v$borders <- pulse_border(v$pulses)
+      v$boxes <- calculate_box(v$pulses)
+      v$this.pulse <- v$boxes %>%
+        inner_join(
+          v$truth,
+          by = "Fingerprint"
+        ) %>%
+        filter_(~is.na(Species)) %>%
+        arrange_(~Xpeak, ~Ypeak) %>%
+        slice_(1)
     }
-    readRDS(file = filename())
-  })
-
-  borders <- reactive({
-    pulse_border(pulses())
-  })
-
-  boxes <- reactive({
-    calculate_box(pulses())
-  })
-
-  this.pulse <- reactive({boxes()[1, ]})
-
-  spectrogram <- reactive({
-    if (is.null(pulses())) {
-      return(NULL)
-    }
-    spectrogram_raster(pulses()@Spectrogram[[1]])
-  })
+  )
 
   output$plot <- renderPlot({
-    if (is.null(pulses())) {
+    if (is.null(v$pulses)) {
       return(character(0))
     }
     plot(
-      spectrogram(),
+      v$spectrogram,
       asp = 0.75,
-      main = pulses()@Metadata$Filename,
-      xlim = c(this.pulse()$BXmin, this.pulse()$BXmax),
-      ylim = c(this.pulse()$BYmin, this.pulse()$BYmax),
+      main = v$pulses@Metadata$Filename,
+      xlim = c(v$this.pulse$BXmin, v$this.pulse$BXmax),
+      ylim = c(v$this.pulse$BYmin, v$this.pulse$BYmax),
       xlab = "Time (ms)",
       ylab = "Frequency (kHz)"
   )
-    lines(borders())
-    points(this.pulse()$Xpeak, this.pulse()$Ypeak, col = "magenta")
+    lines(v$borders)
+    points(v$this.pulse$Xpeak, v$this.pulse$Ypeak, col = "magenta", cex = 3)
+    abline(h = c(18, 20, 21, 27, 35, 40, 50), col = "blue", lty = 2)
   })
+
+  observeEvent(
+    input$new.truth,
+    {
+      if (is.null(input$path)) {
+        return(NULL)
+      }
+
+      selection <- v$truth$Fingerprint == v$this.pulse$Fingerprint
+      v$truth$Species[selection] <- ifelse(
+        input$new.species == "",
+        input$species,
+        input$new.species
+      )
+      v$truth$Type[selection] <- ifelse(
+        input$new.type == "",
+        input$type,
+        input$new.type
+      )
+      if (input$new.species != "") {
+        updateRadioButtons(
+          session = session,
+          inputId = "species",
+          choices = sort(unique(c("noise", na.omit(v$truth$Species))))
+        )
+        updateTextInput(
+          session = session,
+          inputId = "new.species",
+          value = ""
+        )
+      }
+      if (input$new.type != "") {
+        updateRadioButtons(
+          session = session,
+          inputId = "type",
+          choices = unique(
+            sort(c("call", na.omit(v$truth$Type)))
+          )
+        )
+        updateTextInput(
+          session = session,
+          inputId = "new.type",
+          value = ""
+        )
+      }
+      v$this.pulse <- v$boxes %>%
+        inner_join(
+          v$truth,
+          by = "Fingerprint"
+        ) %>%
+        filter_(~is.na(Species)) %>%
+        slice_(1)
+      if (nrow(v$this.pulse) == 0) {
+        saveRDS(v$truth, file = paste0(input$path, "/_truth.rds"))
+        v$filename <- v$truth %>%
+          filter_(~is.na(Species)) %>%
+          sample_n(1) %>%
+          '[['("File")
+        v$pulses <- readRDS(v$filename)
+        v$spectrogram <- spectrogram_raster(v$pulses@Spectrogram[[1]])
+        v$borders <- pulse_border(v$pulses)
+        v$boxes <- calculate_box(v$pulses)
+        v$this.pulse <- v$boxes %>%
+          inner_join(
+            v$truth,
+            by = "Fingerprint"
+          ) %>%
+          filter_(~is.na(Species)) %>%
+          arrange_(~Xpeak, ~Ypeak) %>%
+          slice_(1)
+      }
+    }
+  )
+
 })

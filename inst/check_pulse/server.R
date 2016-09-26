@@ -99,7 +99,13 @@ shinyServer(function(input, output, session) {
       ylab = "Frequency (kHz)"
   )
     lines(v$borders)
-    points(v$this.pulse$Xpeak, v$this.pulse$Ypeak, col = "magenta", cex = 3)
+    points(
+      v$this.pulse$Xpeak,
+      v$this.pulse$Ypeak,
+      col = "magenta",
+      cex = 3,
+      pch = 13
+    )
     abline(h = c(18, 20, 21, 27, 35, 40, 50), col = "blue", lty = 2)
   })
 

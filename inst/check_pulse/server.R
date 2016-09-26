@@ -80,7 +80,7 @@ shinyServer(function(input, output, session) {
           by = "Fingerprint"
         ) %>%
         filter_(~is.na(Species)) %>%
-        arrange_(~Xpeak, ~Ypeak) %>%
+        arrange_(~Ypeak, ~Xpeak) %>%
         slice_(1)
     }
   )
@@ -159,6 +159,7 @@ shinyServer(function(input, output, session) {
           by = "Fingerprint"
         ) %>%
         filter_(~is.na(Species)) %>%
+        arrange_(~Ypeak, ~Xpeak) %>%
         slice_(1)
       if (nrow(v$this.pulse) == 0) {
         saveRDS(v$truth, file = paste0(input$path, "/_truth.rds"))
@@ -176,7 +177,7 @@ shinyServer(function(input, output, session) {
             by = "Fingerprint"
           ) %>%
           filter_(~is.na(Species)) %>%
-          arrange_(~Xpeak, ~Ypeak) %>%
+          arrange_(~Ypeak, ~Xpeak) %>%
           slice_(1)
       }
     }

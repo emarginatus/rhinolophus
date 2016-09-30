@@ -44,9 +44,14 @@ extract_parameter <- function(object, n.part = 5){
     inner_join(x = box, by = "Fingerprint")
 }
 
+#' Extract the Fourier components of a pulse
+#' @param fingerprint the fingerprint of the pulse
+#' @param object the batPulse object
+#' @param n.part the number of Fourier components
 #' @importFrom dplyr %>% mutate_ select_ filter_ arrange_
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr gather_ spread_
+#' @export
 extract_pulse <- function(fingerprint, object, n.part){
   fft <- object@PulseFourier[[fingerprint]] %>%
     as.data.frame()
@@ -66,7 +71,7 @@ extract_pulse <- function(fingerprint, object, n.part){
       key_col = "Part",
       value_col = "Size",
       gather_cols = c("Re", "Im"),
-      factor = TRUE
+      factor_key = TRUE
     ) %>%
     filter_(~X != 1 | Y != 1 | Part != "Im") %>%
     mutate_() %>%

@@ -6,6 +6,9 @@
 \usage{
 voxel_pulse(pulses)
 }
+\arguments{
+\item{pulses}{a batPulse object}
+}
 \description{
 Calculate the voxels for all pulses in a spectrogram
 }

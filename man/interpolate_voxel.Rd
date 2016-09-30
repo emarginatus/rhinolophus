@@ -6,6 +6,11 @@
 \usage{
 interpolate_voxel(spectrogram.raster, this.box)
 }
+\arguments{
+\item{spectrogram.raster}{a spectrogram raster}
+
+\item{this.box}{the bounding box of the pulse}
+}
 \description{
 Calculate the voxel for an individual pulse
 }

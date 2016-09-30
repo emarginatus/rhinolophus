@@ -1,4 +1,5 @@
 #' Calculate the voxels for all pulses in a spectrogram
+#' @param pulses a batPulse object
 #' @importFrom assertthat assert_that
 #' @importFrom methods validObject new
 #' @importFrom dplyr %>% mutate_ select_ rowwise do_ mutate
@@ -37,6 +38,8 @@ voxel_pulse <- function(pulses){
 }
 
 #' Calculate the voxel for an individual pulse
+#' @param spectrogram.raster a spectrogram raster
+#' @param this.box the bounding box of the pulse
 #' @importFrom dplyr %>% mutate_ count_
 #' @importFrom raster extent crop raster resample clump extract Which
 #' @importMethodsFrom raster as.data.frame

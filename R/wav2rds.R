@@ -2,12 +2,14 @@
 #' @export
 #' @param path The path of the wav files. The function will reach recursive in
 #'    the subdirectories of the path.
-#' @param overwrite Overwrite existing rda files. Defaults to FALSE
+#' @param action What to do when a rds file exists? \code{"append"} will add only new information. Existing information will be intact. \code{"update"} will keep all information and update existing information. \code{"overwrite"} remove the rds file and creates a new one. Defaults to \code{"append"}.
 #' @inheritParams read_wav
 #' @inheritParams wav2spectrogram
 #' @inheritParams find_pulses
 #' @inheritParams fft_pulse
 #' @importFrom assertthat assert_that is.string is.flag noNA
+#' @importFrom dplyr %>% semi_join filter_ bind_rows
+#' @importFrom methods validObject
 wav2rds <- function(
   path,
   te.factor = 10,
@@ -18,12 +20,11 @@ wav2rds <- function(
   min.amplitude = 10,
   delta.amplitude = 30,
   n.fourier = 30,
-  overwrite = FALSE
+  action = c("append", "update", "overwrite")
 ){
   assert_that(is.string(path))
   channel <- match.arg(channel)
-  assert_that(is.flag(overwrite))
-  assert_that(noNA(overwrite))
+  action <- match.arg(action)
 
   filenames <- list.files(
     path = path,
@@ -32,37 +33,67 @@ wav2rds <- function(
     ignore.case = TRUE,
     full.names = TRUE
   )
-  if (!overwrite) {
-    rda_filenames <- list.files(
-      path = path,
-      pattern = "\\.rds$",
-      recursive = TRUE,
-      ignore.case = TRUE,
-      full.names = TRUE
-    ) %>%
-      gsub(pattern = "\\.rds", replacement = "", ignore.case = TRUE)
-    filenames <- filenames[
-      !gsub("\\.wav$", "", filenames, ignore.case = TRUE) %in% rda_filenames
-    ]
-  }
 
   for (filename in filenames) {
     message(filename)
-    wav <- read_wav(
-      filename = filename,
-      te.factor = te.factor,
-      channel = channel,
-      max.length = max.length
-    )
-    if (length(wav@Wav[[1]]) == 0) {
-      warning(filename, " contains no information in the ", channel, " channel")
-      next
+
+    rds.file <- filename %>%
+      gsub(pattern = "\\.wav$", replacement = ".rds", ignore.case = TRUE)
+    needwav <- TRUE
+    if (action != "overwrite" || file_test("-f", rds.file)) {
+      current <- readRDS(rds.file)
+      spec.metadata <- current@SpectrogramMetadata %>%
+        semi_join(
+          current@Metadata %>%
+            filter_(
+              ~Filename == filename,
+              ~MaxLength == max.length,
+              ~Channel == channel,
+              ~TimeExpansionFactor == te.factor
+            ),
+          by = c("File" = "Fingerprint")
+        ) %>%
+        filter_(~Window == window.ms)
+      if (spec.metadata$Fingerprint %in% names(current@Spectrogram)) {
+        if (action == "append") {
+          available <- current@PulseMetadata %>%
+            semi_join(
+              spec.metadata,
+              by = c("Spectrogram" = "Fingerprint")
+            )
+          if (any(available$DeltaAmplitude == delta.amplitude)) {
+            next
+          }
+        } else {
+          stop("todo: remove existing pulses")
+        }
+        needwav <- FALSE
+      }
     }
-    spectrogram <- wav2spectrogram(
-      wav = wav,
-      window.ms = window.ms
-    )
-    rm(wav)
+    if (needwav) {
+      wav <- read_wav(
+        filename = filename,
+        te.factor = te.factor,
+        channel = channel,
+        max.length = max.length
+      )
+      if (length(wav@Wav[[1]]) == 0) {
+        warning(filename, " contains no information in the ", channel, " channel")
+        next
+      }
+      spectrogram <- wav2spectrogram(
+        wav = wav,
+        window.ms = window.ms
+      )
+      rm(wav)
+    } else {
+      spectrogram <- new(
+        "batSpectrogram",
+        Metadata = current@Metadata,
+        SpectrogramMetadata = current@SpectrogramMetadata,
+        Spectrogram = current@Spectrogram
+      )
+    }
     pulses <- find_pulses(
       spectrogram = spectrogram,
       min.peak = min.peak,
@@ -75,9 +106,24 @@ wav2rds <- function(
       n.fourier = n.fourier
     )
     rm(pulses)
+    if (exists("current")) {
+      pulses.fft@PulseMetadata <- bind_rows(
+        pulses.fft@PulseMetadata %>%
+          mutate_(Spectrogram = ~levels(Spectrogram)[Spectrogram]),
+        current@PulseMetadata %>%
+          mutate_(Spectrogram = ~levels(Spectrogram)[Spectrogram])
+      ) %>%
+        mutate_(Spectrogram = ~factor(Spectrogram))
+      pulses.fft@PulseFourier <- c(
+        pulses.fft@PulseFourier,
+        current@PulseFourier
+      )
+      validObject(pulses.fft)
+      rm(current)
+    }
     saveRDS(
       pulses.fft,
-      file = gsub("\\.wav$", ".rds", filename, ignore.case = TRUE)
+      file = rds.file
     )
     rm(pulses.fft)
     gc()

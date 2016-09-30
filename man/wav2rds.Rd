@@ -6,7 +6,8 @@
 \usage{
 wav2rds(path, te.factor = 10, channel = c("right", "left"),
   max.length = 1.8, window.ms = 2, min.peak = 40, min.amplitude = 10,
-  delta.amplitude = 30, n.fourier = 30, overwrite = FALSE)
+  delta.amplitude = 30, n.fourier = 30, action = c("append", "update",
+  "overwrite"))
 }
 \arguments{
 \item{path}{The path of the wav files. The function will reach recursive in
@@ -31,7 +32,7 @@ first 10 * 1.8 = 18 seconds from the wav file.}
 
 \item{n.fourier}{The number of required Fourier components in each direction.}
 
-\item{overwrite}{Overwrite existing rda files. Defaults to FALSE}
+\item{action}{What to do when a rds file exists? \code{"append"} will add only new information. Existing information will be intact. \code{"update"} will keep all information and update existing information. \code{"overwrite"} remove the rds file and creates a new one. Defaults to \code{"append"}.}
 }
 \description{
 Find the pulses in a bunch of wav files and save them to rda files

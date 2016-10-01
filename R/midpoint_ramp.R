@@ -6,12 +6,12 @@
 #' @importFrom assertthat assert_that is.number is.count
 #' @importFrom grDevices colorRampPalette
 #' @importFrom utils head tail
-midpoint_ramp <- function(x, mid.point = c(10, 20), n = 20){
+midpoint_ramp <- function(x, mid.point = 10, n = 20){
   assert_that(inherits(x, "RasterLayer"))
   assert_that(is.number(mid.point))
   assert_that(is.count(n))
 
-  delta <- max(
+  delta <- min(
     mid.point - x@data@min,
     x@data@max - mid.point
   )

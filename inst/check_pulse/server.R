@@ -85,6 +85,14 @@ shinyServer(function(input, output, session) {
     }
   )
 
+  ramp <- reactive({
+    midpoint_ramp(
+      v$spectrogram,
+      mid.point = v$this.pulse$MaxAmplitude - v$this.pulse$DeltaAmplitude,
+      n = 20
+    )
+  })
+
   output$plot <- renderPlot({
     if (is.null(v$pulses)) {
       return(character(0))
@@ -93,12 +101,19 @@ shinyServer(function(input, output, session) {
       v$spectrogram,
       asp = 0.75,
       main = v$pulses@Metadata$Filename,
+      breaks = ramp()$Breaks,
+      col = ramp()$Colour,
       xlim = c(v$this.pulse$BXmin, v$this.pulse$BXmax),
       ylim = c(v$this.pulse$BYmin, v$this.pulse$BYmax),
       xlab = "Time (ms)",
       ylab = "Frequency (kHz)"
-  )
+    )
     lines(v$borders)
+    lines(
+      v$borders[v$borders$Fingerprint == v$this.pulse$Fingerprint, ],
+      col = "magenta",
+      lwd = 2
+    )
     points(
       v$this.pulse$Xpeak,
       v$this.pulse$Ypeak,

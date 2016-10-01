@@ -4,7 +4,7 @@
 \alias{midpoint_ramp}
 \title{Generate a colour ramp true a midpoint}
 \usage{
-midpoint_ramp(x, mid.point = c(10, 20), n = 20)
+midpoint_ramp(x, mid.point = 10, n = 20)
 }
 \arguments{
 \item{x}{a RasterLayer object}

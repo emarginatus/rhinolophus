@@ -9,28 +9,6 @@ extract_parameter <- function(object, n.part = 5){
   assert_that(inherits(object, "batPulse"))
   assert_that(is.count(n.part))
 
-  resolution <- 1 / c(0.5, 0.5)
-
-  box <- object@PulseMetadata %>%
-    mutate_(
-      S = ~(Xmax - Xmin) * resolution[1],
-      S = ~pmin(next_power_2(S), 256),
-      SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
-    )
-  while (any(box$SY > 1)) {
-    box <- box %>%
-      mutate_(
-        S = ~ifelse(SY == 1, S, S * 2),
-        SY = ~ ceiling(Ymax * resolution[2] / S) - floor(Ymin * resolution[2] / S)
-      )
-  }
-  box <- box %>%
-    mutate_(
-      BYmin = ~floor(Ymin * resolution[2] / S) * S / resolution[2],
-      BYmax = ~ceiling(Ymax * resolution[2] / S) * S / resolution[2]
-    ) %>%
-    select_(~Fingerprint, ~S, ~BYmin, ~DeltaAmplitude)
-
   object@PulseMetadata %>%
     rowwise() %>%
     do_(
@@ -41,7 +19,7 @@ extract_parameter <- function(object, n.part = 5){
       )
     ) %>%
     unnest_("Parameter") %>%
-    inner_join(x = box, by = "Fingerprint")
+    inner_join(x = calculate_box(object), by = "Fingerprint")
 }
 
 #' Extract the Fourier components of a pulse

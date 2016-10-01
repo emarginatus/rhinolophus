@@ -40,6 +40,7 @@ Collate:
     'midpoint_ramp.R'
     'next_power_2.R'
     'plotpattern.R'
+    'prepare_analysis.R'
     'prepareplot.R'
     'pulse_border.R'
     'pulse_label.R'

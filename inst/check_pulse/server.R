@@ -5,6 +5,7 @@ library(rhinolophus)
 
 shinyServer(function(input, output, session) {
   v <- reactiveValues(
+    counter = 1,
     truth = NULL,
     current = NULL,
     pulses = NULL,
@@ -111,13 +112,13 @@ shinyServer(function(input, output, session) {
     lines(v$borders)
     lines(
       v$borders[v$borders$Fingerprint == v$this.pulse$Fingerprint, ],
-      col = "magenta",
+      col = "yellow",
       lwd = 2
     )
     points(
       v$this.pulse$Xpeak,
       v$this.pulse$Ypeak,
-      col = "magenta",
+      col = "yellow",
       cex = 3,
       pch = 13
     )
@@ -194,6 +195,11 @@ shinyServer(function(input, output, session) {
           filter_(~is.na(Species)) %>%
           arrange_(~Ypeak, ~Xpeak) %>%
           slice_(1)
+      }
+      v$counter <- v$counter + 1
+      if (v$counter > 10) {
+        saveRDS(v$truth, file = paste0(input$path, "/_truth.rds"))
+        v$counter <- 1
       }
     }
   )

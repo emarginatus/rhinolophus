@@ -23,11 +23,13 @@ shinyServer(function(input, output, session) {
         updateRadioButtons(
           session = session,
           inputId = "species",
+          inline = TRUE,
           choices = sort(unique(c("noise", na.omit(v$truth$Species))))
         )
         updateRadioButtons(
           session = session,
           inputId = "type",
+          inline = TRUE,
           choices = sort(unique(
             c("call", na.omit(v$truth$Type))
           ))
@@ -147,6 +149,7 @@ shinyServer(function(input, output, session) {
         updateRadioButtons(
           session = session,
           inputId = "species",
+          inline = TRUE,
           choices = sort(unique(c("noise", na.omit(v$truth$Species))))
         )
         updateTextInput(
@@ -159,6 +162,7 @@ shinyServer(function(input, output, session) {
         updateRadioButtons(
           session = session,
           inputId = "type",
+          inline = TRUE,
           choices = unique(
             sort(c("call", na.omit(v$truth$Type)))
           )

@@ -2,7 +2,7 @@ library(shiny)
 
 shinyUI(fluidPage(
 
-  titlePanel("Check the automatic dermination of pulses"),
+  titlePanel("Add reference pulses"),
 
   sidebarLayout(
     sidebarPanel(

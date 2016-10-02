@@ -49,6 +49,7 @@ Collate:
     'sample_pulse.R'
     'spectrogram_raster.R'
     'trainrda.R'
+    'validate_truth.R'
     'voxel_pulse.R'
     'wav2rds.R'
     'wav2spectrogram.R'

@@ -15,10 +15,13 @@ prepare_analysis <- function(path, n.part = 30){
     lapply(
       function(filename){
         message(filename)
-        pulses <- readRDS(file = filename)
-        extract_parameter(pulses, n.part = n.part)
+        readRDS(file = filename) %>%
+          extract_parameter(n.part = n.part)
       }
     ) %>%
     bind_rows() %>%
-    saveRDS(paste0(path, "/_parameter.rds"))
+    mutate_(
+      Spectrogram = ~factor(Spectrogram)
+    ) %>%
+    saveRDS(file = paste0(path, "/_parameter.rds"))
 }

@@ -2,11 +2,18 @@
 % Please edit documentation in R/fft_pulse.R
 \name{interpolate_fft}
 \alias{interpolate_fft}
-\title{Calculate the fast Fourier transformation of an indivual pulse}
+\title{Calculate the fast Fourier transformation of an individual pulse}
 \usage{
 interpolate_fft(spectrogram.raster, this.box, n.fourier)
 }
+\arguments{
+\item{spectrogram.raster}{a spectrogram raster}
+
+\item{this.box}{the bounding box of the pulse}
+
+\item{n.fourier}{The number of required Fourier components in each direction.}
+}
 \description{
-Calculate the fast Fourier transformation of an indivual pulse
+Calculate the fast Fourier transformation of an individual pulse
 }
 

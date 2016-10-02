@@ -43,7 +43,9 @@ fft_pulse <- function(pulses, n.fourier = 30){
   return(pulses)
 }
 
-#' Calculate the fast Fourier transformation of an indivual pulse
+#' Calculate the fast Fourier transformation of an individual pulse
+#' @inheritParams fft_pulse
+#' @inheritParams interpolate_voxel
 #' @importFrom dplyr %>%
 #' @importFrom raster extent crop raster resample clump extract Which mask
 #' @importMethodsFrom raster as.matrix

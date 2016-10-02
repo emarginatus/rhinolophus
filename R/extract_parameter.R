@@ -9,7 +9,7 @@ extract_parameter <- function(object, n.part = 5){
   assert_that(inherits(object, "batPulse"))
   assert_that(is.count(n.part))
 
-  object@PulseMetadata %>%
+  params <- object@PulseMetadata %>%
     rowwise() %>%
     do_(
       Parameter = ~extract_pulse(
@@ -17,9 +17,21 @@ extract_parameter <- function(object, n.part = 5){
         object = object,
         n.part = n.part
       )
-    ) %>%
+    )
+  if (nrow(params) == 0) {
+    return(NULL)
+  }
+  params %>%
     unnest_("Parameter") %>%
-    inner_join(x = calculate_box(object), by = "Fingerprint")
+    inner_join(
+      x = calculate_box(object) %>%
+        mutate_(Spectrogram = ~levels(Spectrogram)[Spectrogram]) %>%
+        select_(
+          ~-Xmin, ~-Xmax, ~-Ymin, ~-Ymax, ~-Xpeak, ~-Ypeak, ~-MaxAmplitude,
+          ~-BXmin, ~-BXmax, ~-BYmax
+        ),
+      by = "Fingerprint"
+    )
 }
 
 #' Extract the Fourier components of a pulse

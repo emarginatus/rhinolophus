@@ -4,7 +4,8 @@
 #' @importFrom  dplyr %>% filter_ inner_join group_by_ mutate_ n arrange_ ungroup transmute_
 #' @importFrom kohonen xyf map
 #' @importFrom class somgrid
-validate_truth <- function(path){
+fit_kohonen <- function(path){
+  n.fold <- 10
   truth <- paste0(path, "/_truth.rds") %>%
     normalizePath() %>%
     readRDS()
@@ -28,7 +29,7 @@ validate_truth <- function(path){
     ) %>%
     filter_(~Combination != "other::other") %>%
     arrange_(~Species, ~Type, ~File, ~Fingerprint) %>%
-    mutate_(Set = ~row_number(Fingerprint) %% 10)
+    mutate_(Set = ~1 + row_number(Fingerprint) %% n.fold)
   Y <- model.matrix(~ 0 + Combination, data = dataset)
   n.dim <- ceiling(nrow(dataset) ^ (1/4))
   usable <- c(
@@ -46,7 +47,7 @@ validate_truth <- function(path){
   dataset_matrix <- as.matrix(dataset[, relevant])
   dataset_matrix[is.na(dataset_matrix)] <- 0
   models <- lapply(
-    0:9,
+    seq_len(n.fold),
     function(i){
       xyf(
         dataset_matrix[dataset$Set != i, ],
@@ -55,11 +56,18 @@ validate_truth <- function(path){
       )
     }
   )
+  prediction <- lapply(
+    models,
+    function(model){
+      model$codes$Y[
+        map(model, newdata = dataset_matrix)$unit.classif,
+      ]
+    }
+  )
   misclassification <- sapply(
-    0:9,
+    prediction,
     function(i){
-      mapped <- map(models[[i + 1]], newdata = dataset_matrix)$unit.classif
-      models[[i + 1]]$codes$Y[mapped, ] %>%
+      i %>%
         '-'(Y) %>%
         pmax(0) %>%
         rowSums()
@@ -67,31 +75,50 @@ validate_truth <- function(path){
   ) %>%
     rowMeans() %>%
     round(4)
-
   confusion.matrix <- lapply(
-    0:9,
+    prediction,
     function(i){
-      mapped <- map(models[[i + 1]], newdata = dataset_matrix)$unit.classif
-      crossprod(Y, models[[i + 1]]$codes$Y[mapped, ])
+      crossprod(Y, i)
     }
   ) %>%
     Reduce(f = "+") %>%
     round(2)
-  colnames(confusion.matrix) <- gsub("^Combination", "", colnames(confusion.matrix))
-  rownames(confusion.matrix) <- gsub("^Combination", "", rownames(confusion.matrix))
-  result <- dataset %>%
+
+  to.check <- misclassification %>%
+    order(decreasing = TRUE) %>%
+    head(100)
+  prediction <- lapply(
+      prediction,
+      function(i) {
+        i[to.check, ]
+      }
+    ) %>%
+      Reduce(f = '+') %>%
+      '/'(n.fold)
+  classification <- colnames(prediction) %>%
+    gsub(pattern = "Combination(.*)::(.*)", replacement = "\\1 - \\2") %>%
+    '['(apply(prediction, 1, which.max)) %>%
+    sprintf(
+      fmt = "%s (%2.1f%%)",
+      apply(prediction, 1, max) %>%
+        '*'(100)
+    )
+
+  anomaly <- dataset[to.check, ] %>%
     ungroup() %>%
     transmute_(
       ~Fingerprint,
       ~Species,
       ~Type,
-      Misclassification = ~misclassification
+      Classification = ~classification,
+      Misclassification = ~misclassification[to.check]
     ) %>%
     inner_join(
       truth %>%
         select_(~File, ~Fingerprint),
       by = "Fingerprint"
     )
-  attr(result, "confusion.matrix") <- confusion.matrix
-  return(result)
+  attr(models, "anomaly") <- anomaly
+  attr(models, "confusion.matrix") <- confusion.matrix
+  return(models)
 }

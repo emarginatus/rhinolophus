@@ -31,7 +31,7 @@ shinyServer(function(input, output, session) {
           inputId = "type",
           inline = TRUE,
           choices = sort(unique(
-            c("call", na.omit(v$truth$Type))
+            c("C", na.omit(v$truth$Type))
           ))
         )
       } else {
@@ -61,8 +61,7 @@ shinyServer(function(input, output, session) {
                   File = ~gsub("\\.wav$", "\\.rds", Filename, ignore.case = TRUE),
                   ~Fingerprint,
                   Species = NA_character_,
-                  Type = NA_character_,
-                  SecondOption = NA
+                  Type = NA_character_
                 )
             }
           ) %>%
@@ -164,7 +163,7 @@ shinyServer(function(input, output, session) {
           inputId = "type",
           inline = TRUE,
           choices = unique(
-            sort(c("call", na.omit(v$truth$Type)))
+            sort(c("C", na.omit(v$truth$Type)))
           )
         )
         updateTextInput(

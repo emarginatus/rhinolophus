@@ -1,9 +1,10 @@
 #' Get validation summary for raw data
 #' @param path the path of the _truth.rds and _parameter.rds files
 #' @export
-#' @importFrom  dplyr %>% filter_ inner_join group_by_ mutate_ n arrange_ ungroup transmute_
+#' @importFrom  dplyr %>% filter_ inner_join group_by_ mutate_ n arrange_ ungroup select_ summarise_ bind_rows sample_frac min_rank
 #' @importFrom kohonen xyf map
 #' @importFrom class somgrid
+#' @importFrom utils head
 fit_kohonen <- function(path){
   n.fold <- 10
   truth <- paste0(path, "/_truth.rds") %>%
@@ -29,7 +30,8 @@ fit_kohonen <- function(path){
     ) %>%
     filter_(~Combination != "other::other") %>%
     arrange_(~Species, ~Type, ~File, ~Fingerprint) %>%
-    mutate_(Set = ~1 + row_number(Fingerprint) %% n.fold)
+    mutate_(Set = ~1 + row_number(Fingerprint) %% n.fold) %>%
+    ungroup()
   Y <- model.matrix(~ 0 + Combination, data = dataset)
   n.dim <- ceiling(nrow(dataset) ^ (1/4))
   usable <- c(
@@ -56,69 +58,120 @@ fit_kohonen <- function(path){
       )
     }
   )
-  prediction <- lapply(
-    models,
-    function(model){
-      model$codes$Y[
-        map(model, newdata = dataset_matrix)$unit.classif,
-      ]
+  crossvalidation <- lapply(
+    seq_len(n.fold),
+    function(i){
+      prediction <- predict_kohonen(
+        models = models[i],
+        dataset_matrix = dataset_matrix[dataset$Set == i, ]
+      )
+      confusion <- dataset %>%
+        filter_(~Set == i) %>%
+        select_(~Fingerprint, ~Species, ~Combination) %>%
+        mutate_(
+          PredSpecies = ~prediction$Dominant$DominantSpecies,
+          PredCombination = ~gsub(
+            "^Combination",
+            "",
+            prediction$Dominant$Category
+          ),
+          PropSpecies = ~prediction$Dominant$DominantProportion,
+          PropCombination = ~prediction$Dominant$Proportion,
+          CorrectSpecies = ~ifelse(
+            Species == PredSpecies,
+            PropSpecies,
+            0
+          ),
+          CorrectCombination = ~ifelse(
+            Combination == PredCombination,
+            PropCombination,
+            0
+          ),
+          Text = ~prediction$Dominant$Text
+        )
+      list(
+        SpeciesConfusion = confusion %>%
+          group_by_(~Species, ~PredSpecies) %>%
+          summarise_(
+            N = ~n(),
+            Proportion = ~sum(PropSpecies)
+          ),
+        CombinationConfusion = confusion %>%
+          group_by_(~Combination, ~PredCombination) %>%
+          summarise_(
+            N = ~n(),
+            Proportion = ~sum(PropCombination)
+          ),
+        Quality = confusion %>%
+          select_(
+            ~PredSpecies,
+            ~PredCombination,
+            ~Fingerprint,
+            ~CorrectSpecies,
+            ~CorrectCombination,
+            ~Text
+          )
+      )
     }
   )
-  misclassification <- sapply(
-    prediction,
-    function(i){
-      i %>%
-        '-'(Y) %>%
-        pmax(0) %>%
-        rowSums()
+  cv.species <- lapply(
+    crossvalidation,
+    function(x){
+      x$SpeciesConfusion
     }
   ) %>%
-    rowMeans() %>%
-    round(4)
-  confusion.matrix <- lapply(
-    prediction,
-    function(i){
-      crossprod(Y, i)
-    }
-  ) %>%
-    Reduce(f = "+") %>%
-    round(2)
-
-  to.check <- misclassification %>%
-    order(decreasing = TRUE) %>%
-    head(100)
-  prediction <- lapply(
-      prediction,
-      function(i) {
-        i[to.check, ]
-      }
-    ) %>%
-      Reduce(f = '+') %>%
-      '/'(n.fold)
-  classification <- colnames(prediction) %>%
-    gsub(pattern = "Combination(.*)::(.*)", replacement = "\\1 - \\2") %>%
-    '['(apply(prediction, 1, which.max)) %>%
-    sprintf(
-      fmt = "%s (%2.1f%%)",
-      apply(prediction, 1, max) %>%
-        '*'(100)
+    bind_rows() %>%
+    group_by_(~Species, ~PredSpecies) %>%
+    summarise_(
+      N = ~sum(N),
+      Proportion = ~sum(Proportion)
     )
-
-  anomaly <- dataset[to.check, ] %>%
-    ungroup() %>%
-    transmute_(
-      ~Fingerprint,
-      ~Species,
-      ~Type,
-      Classification = ~classification,
-      Misclassification = ~misclassification[to.check]
-    ) %>%
+  cv.combination <- lapply(
+    crossvalidation,
+    function(x){
+      x$CombinationConfusion
+    }
+  ) %>%
+    bind_rows() %>%
+    group_by_(~Combination, ~PredCombination) %>%
+    summarise_(
+      N = ~sum(N),
+      Proportion = ~sum(Proportion)
+    )
+  cv.quality <- lapply(
+    crossvalidation,
+    function(x){
+      x$Quality
+    }
+  ) %>%
+    bind_rows() %>%
     inner_join(
-      truth %>%
-        select_(~File, ~Fingerprint),
+      dataset %>%
+        select_(~Fingerprint, ~Spectrogram),
       by = "Fingerprint"
     )
+  anomaly <- cv.quality %>%
+    group_by_(~PredSpecies) %>%
+    filter_(~min_rank(CorrectSpecies) <= 5) %>%
+    sample_frac() %>%
+    slice_(~1:5) %>%
+    ungroup() %>%
+    select_(~Fingerprint, ~Text, Quality = ~CorrectSpecies) %>%
+    bind_rows(
+      cv.quality %>%
+        group_by_(~PredCombination) %>%
+        filter_(~min_rank(CorrectCombination) <= 5) %>%
+        sample_frac() %>%
+        slice_(~1:5) %>%
+        ungroup() %>%
+        select_(~Fingerprint, ~Text, Quality = ~CorrectCombination)
+    ) %>%
+    group_by_(~Fingerprint, ~Text) %>%
+    summarise_(Quality = ~min(Quality)) %>%
+    arrange_(~Fingerprint)
+
   attr(models, "anomaly") <- anomaly
-  attr(models, "confusion.matrix") <- confusion.matrix
+  attr(models, "cv_species") <- cv.species
+  attr(models, "cv_combination") <- cv.combination
   return(models)
 }

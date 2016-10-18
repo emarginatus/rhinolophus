@@ -41,6 +41,7 @@ Collate:
     'midpoint_ramp.R'
     'next_power_2.R'
     'plotpattern.R'
+    'predict_kohonen.R'
     'prepare_analysis.R'
     'prepareplot.R'
     'pulse_border.R'

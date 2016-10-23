@@ -5,7 +5,7 @@
 #' @importFrom kohonen xyf map
 #' @importFrom class somgrid
 #' @importFrom utils head
-fit_kohonen <- function(path){
+fit_kohonen <- function(path, anomalies = 10){
   n.fold <- 10
   truth <- paste0(path, "/_truth.rds") %>%
     normalizePath() %>%
@@ -152,17 +152,17 @@ fit_kohonen <- function(path){
     )
   anomaly <- cv.quality %>%
     group_by_(~PredSpecies) %>%
-    filter_(~min_rank(CorrectSpecies) <= 5) %>%
+    filter_(~min_rank(CorrectSpecies) <= anomalies) %>%
     sample_frac() %>%
-    slice_(~1:5) %>%
+    slice_(~seq_len(anomalies)) %>%
     ungroup() %>%
     select_(~Fingerprint, ~Text, Quality = ~CorrectSpecies) %>%
     bind_rows(
       cv.quality %>%
         group_by_(~PredCombination) %>%
-        filter_(~min_rank(CorrectCombination) <= 5) %>%
+        filter_(~min_rank(CorrectCombination) <= anomalies) %>%
         sample_frac() %>%
-        slice_(~1:5) %>%
+        slice_(~seq_len(anomalies)) %>%
         ungroup() %>%
         select_(~Fingerprint, ~Text, Quality = ~CorrectCombination)
     ) %>%

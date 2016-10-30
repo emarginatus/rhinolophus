@@ -80,7 +80,12 @@ find_pulses <- function(
           this.spec <- crop(spectrogram.raster, extent(xy))
           this.zone <- crop(this.zone, extent(xy))
           this.spec[is.na(this.zone) | this.zone == 0] <- -Inf
-          this.max <- focal(this.spec, matrix(1, ncol = 7, nrow = 7), max)
+          n.focus <- pmin(2 * ceiling(dim(this.spec)[1:2] / 2) - 1, 7)
+          this.max <- focal(
+            this.spec,
+            matrix(1, nrow = n.focus[1], ncol = n.focus[2]),
+            max
+          )
           candidate <- Which(
             this.spec == this.max & is.finite(this.spec),
             cells = TRUE

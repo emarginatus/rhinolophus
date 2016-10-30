@@ -30,7 +30,7 @@ shinyUI(fluidPage(
       radioButtons(
         inputId = "type",
         label = "Choose call type",
-        choices = "call",
+        choices = "C",
         inline = TRUE,
         width = "100%"
       ),

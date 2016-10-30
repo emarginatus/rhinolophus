@@ -40,7 +40,7 @@ wav2rds <- function(
     rds.file <- filename %>%
       gsub(pattern = "\\.wav$", replacement = ".rds", ignore.case = TRUE)
     needwav <- TRUE
-    if (action != "overwrite" || file_test("-f", rds.file)) {
+    if (action != "overwrite" && file_test("-f", rds.file)) {
       current <- readRDS(rds.file)
       spec.metadata <- current@SpectrogramMetadata %>%
         semi_join(

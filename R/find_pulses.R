@@ -7,7 +7,6 @@
 #' @importFrom digest sha1
 #' @importFrom methods new
 #' @param spectrogram The spectrogram
-#' @param min.peak Take only pulses into account with a maximum amplitude of at least min.peak
 #' @param min.amplitude The minimum amplitude of the pulse
 #' @param delta.amplitude The difference in amplitude between the peak of the pulse and the lowest value in the pulse.
 #' @examples
@@ -18,15 +17,12 @@
 #'  find_pulses(spectrogram)
 find_pulses <- function(
   spectrogram,
-  min.peak = 40,
   min.amplitude = 10,
   delta.amplitude = 10
 ){
-  assert_that(is.number(min.peak))
   assert_that(is.number(min.amplitude))
   assert_that(is.number(delta.amplitude))
   assert_that(delta.amplitude > 0)
-  assert_that(min.peak >= min.amplitude + delta.amplitude)
   assert_that(inherits(spectrogram, "batSpectrogram"))
 
   pulses <- lapply(
@@ -41,7 +37,7 @@ find_pulses <- function(
       )
       local.max <- zonal(spectrogram.raster, candidate.zone, fun = max)
       relevant <- local.max[
-        local.max[, 2] >= max(min.peak, min.amplitude + min(delta.amplitude)),
+        local.max[, 2] >= min.amplitude + min(delta.amplitude),
         "zone"
       ]
       if (length(relevant) == 0) {
@@ -91,7 +87,7 @@ find_pulses <- function(
             cells = TRUE
           )
           db <- this.spec[candidate]
-          relevant.peak <- which(db >= min.peak)
+          relevant.peak <- which(db >= min.amplitude + delta.amplitude)
           if (length(relevant.peak) == 0) {
             return(pulse)
           }
@@ -101,14 +97,6 @@ find_pulses <- function(
           candidate <- candidate[relevant.peak]
           db <- db[relevant.peak]
 
-          to.low <- which(db < (min.amplitude + delta.amplitude))
-          if (length(to.low) > 0) {
-            db <- db[-to.low]
-            candidate <- candidate[-to.low]
-          }
-          if (length(candidate) == 0) {
-            return(pulse)
-          }
           working <- this.spec
           i <- 1
           while (i <= length(candidate)) {

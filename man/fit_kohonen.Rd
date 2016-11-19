@@ -4,7 +4,7 @@
 \alias{fit_kohonen}
 \title{Get validation summary for raw data}
 \usage{
-fit_kohonen(path, anomalies = 10)
+fit_kohonen(path, n.level = 5, anomalies = 10)
 }
 \arguments{
 \item{path}{the path of the _truth.rds and _parameter.rds files}

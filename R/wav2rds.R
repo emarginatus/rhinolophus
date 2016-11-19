@@ -6,7 +6,6 @@
 #' @inheritParams read_wav
 #' @inheritParams wav2spectrogram
 #' @inheritParams find_pulses
-#' @inheritParams fft_pulse
 #' @importFrom assertthat assert_that is.string is.flag noNA
 #' @importFrom dplyr %>% semi_join filter_ bind_rows
 #' @importFrom methods validObject
@@ -16,10 +15,8 @@ wav2rds <- function(
   channel = c("right", "left"),
   max.length = 1.8,
   window.ms = 2,
-  min.peak = 40,
   min.amplitude = 10,
   delta.amplitude = 30,
-  n.fourier = 30,
   action = c("append", "update", "overwrite")
 ){
   assert_that(is.string(path))
@@ -96,36 +93,34 @@ wav2rds <- function(
     }
     pulses <- find_pulses(
       spectrogram = spectrogram,
-      min.peak = min.peak,
       min.amplitude = min.amplitude,
       delta.amplitude = delta.amplitude
     )
     rm(spectrogram)
-    pulses.fft <- fft_pulse(
-      pulses = pulses,
-      n.fourier = n.fourier
+    pulses.matrix <- pulse_matrix(
+      pulses = pulses
     )
     rm(pulses)
     if (exists("current")) {
-      pulses.fft@PulseMetadata <- bind_rows(
-        pulses.fft@PulseMetadata %>%
+      pulses.matrix@PulseMetadata <- bind_rows(
+        pulses.matrix@PulseMetadata %>%
           mutate_(Spectrogram = ~levels(Spectrogram)[Spectrogram]),
         current@PulseMetadata %>%
           mutate_(Spectrogram = ~levels(Spectrogram)[Spectrogram])
       ) %>%
         mutate_(Spectrogram = ~factor(Spectrogram))
-      pulses.fft@PulseFourier <- c(
-        pulses.fft@PulseFourier,
-        current@PulseFourier
+      pulses.matrix@PulseMatrix <- c(
+        pulses.matrix@PulseMatrix,
+        current@PulseMatrix
       )
-      validObject(pulses.fft)
+      validObject(pulses.matrix)
       rm(current)
     }
     saveRDS(
-      pulses.fft,
+      pulses.matrix,
       file = rds.file
     )
-    rm(pulses.fft)
+    rm(pulses.matrix)
     gc()
   }
 }

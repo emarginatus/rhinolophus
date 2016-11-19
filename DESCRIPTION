@@ -19,6 +19,7 @@ Imports:
     methods,
     sp,
     raster,
+    Matrix,
     class
 Depends:
     kohonen
@@ -35,7 +36,6 @@ Collate:
     'combine_rds.R'
     'ensemble_predict.R'
     'extract_parameter.R'
-    'fft_pulse.R'
     'find_pulses.R'
     'fit_kohonen.R'
     'midpoint_ramp.R'
@@ -46,12 +46,12 @@ Collate:
     'prepareplot.R'
     'pulse_border.R'
     'pulse_label.R'
+    'pulse_matrix.R'
     'read_wav.R'
     'reconstruct_pulse.R'
     'sample_pulse.R'
     'spectrogram_raster.R'
     'trainrda.R'
-    'voxel_pulse.R'
     'wav2rds.R'
     'wav2spectrogram.R'
 RoxygenNote: 5.0.1

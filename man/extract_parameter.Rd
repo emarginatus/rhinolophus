@@ -4,7 +4,7 @@
 \alias{extract_parameter}
 \title{Extract the coefficients of the pattern from a batPulse object}
 \usage{
-extract_parameter(object, n.part = 5)
+extract_parameter(object, n.level = 5)
 }
 \arguments{
 \item{object}{a batPulse object}

@@ -7,11 +7,26 @@
 #' @importFrom raster raster
 #' @importFrom graphics plot
 #' @importFrom stats fft
-reconstruct.pulse <- function(pulse.fft, local.time = TRUE, plot.it = TRUE, asp = 0.5){
-  fft.coefs <- matrix(0, nrow = pulse.fft$fft.dim[1], ncol = pulse.fft$fft.dim[2])
-  max.dim <- pmin(dim(pulse.fft$fft), pulse.fft$fft.dim)
-  fft.coefs[seq_len(max.dim[1]), seq_len(max.dim[2])] <- pulse.fft$fft[seq_len(max.dim[1]), seq_len(max.dim[2])]
-  amplitude <- abs(fft(fft.coefs, inverse = TRUE) / prod(pulse.fft$fft.dim))
+reconstruct.pulse <- function(pulses, fingerprint){
+  assert_that(inherits(pulses, "batPulse"))
+  assert_that(is.string(fingerprint))
+  assert_that(has_name(pulses@PulseFourier, fingerprint))
+
+  box <- pulses %>%
+    calculate_box() %>%
+    filter_(~Fingerprint == fingerprint)
+  fft_coef <- matrix(0, ncol = box$S, nrow = box$S)
+  new_coef <- pulses@PulseFourier[[fingerprint]]
+  fft_coef[seq_len(nrow(new_coef)), seq_len(ncol(new_coef))] <- new_coef
+  amplitude <- fft_coef %>%
+    fft(inverse = TRUE) %>%
+    '/'(
+      dim(pulses@PulseFourier[[fingerprint]]) %>%
+        prod()
+    ) %>%
+    abs()
+  image(amplitude)
+
   extra.time <- ifelse(local.time, 0, pulse.fft$parameters["StartTime"])
   puls.raster <- raster(
     amplitude[rev(seq_len(pulse.fft$fft.dim[1])), ],

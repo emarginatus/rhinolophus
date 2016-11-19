@@ -4,7 +4,7 @@
 \alias{reconstruct.pulse}
 \title{reconstruct a pulse}
 \usage{
-reconstruct.pulse(pulse.fft, local.time = TRUE, plot.it = TRUE, asp = 0.5)
+reconstruct.pulse(pulses, fingerprint)
 }
 \arguments{
 \item{pulse.fft}{The fourier representation of the pulse}

@@ -5,19 +5,19 @@
 #' @importFrom kohonen xyf map
 #' @importFrom class somgrid
 #' @importFrom utils head
-fit_kohonen <- function(path, anomalies = 10){
+fit_kohonen <- function(path, n.level = 5, anomalies = 10){
   n.fold <- 10
   truth <- paste0(path, "/_truth.rds") %>%
     normalizePath() %>%
     readRDS()
-  parameter <- paste0(path, "/_parameter.rds") %>%
+  parameter <- sprintf("%s/_parameter_%02i.rds", path, n.level) %>%
     normalizePath() %>%
     readRDS()
-
-  dataset <- truth %>%
-    filter_(~!is.na(Species)) %>%
+  dataset <- parameter$meta %>%
+    filter_(~Level >= n.level) %>%
     inner_join(
-      parameter,
+      truth %>%
+        filter_(~!is.na(Species)),
       by = "Fingerprint"
     ) %>%
     group_by_(~Species, ~Type) %>%
@@ -31,23 +31,31 @@ fit_kohonen <- function(path, anomalies = 10){
     filter_(~Combination != "other::other") %>%
     arrange_(~Species, ~Type, ~File, ~Fingerprint) %>%
     mutate_(Set = ~1 + row_number(Fingerprint) %% n.fold) %>%
-    ungroup()
+    ungroup() %>%
+    select_(
+      ~Spectrogram, ~Fingerprint, ~Species, ~Type, ~Combination, ~Set,
+      ~MaxAmplitude, ~DeltaAmplitude, ~BYmin
+    )
+  pca_cols <- min(
+    floor(nrow(dataset) / 10 - 3),
+    ncol(parameter$pca$x)
+  )
+  if (pca_cols < 1) {
+    stop("Not enough truth data")
+  }
+  pca <- parameter$pca$x[, seq_len(pca_cols)] %>%
+    as.data.frame() %>%
+    rownames_to_column("Fingerprint")
+  dataset <- dataset %>%
+    inner_join(pca, by = "Fingerprint")
+
   Y <- model.matrix(~ 0 + Combination, data = dataset)
   n.dim <- ceiling(nrow(dataset) ^ (1/4))
-  usable <- c(
-     4,  6, 10, 14, 18,  22,  26,  30,  34,  38,
-    42, 46, 50, 54, 58,  62,  66,  70,  78,  78,
-    82, 86, 90, 94, 98, 102, 106, 110, 114, 118
-  ) %>%
-    cumsum() %>%
-    '<='(nrow(dataset) * 0.09) %>%
-    sum() %>%
-    seq_len() %>%
-    sprintf(fmt = "%02i")
-  relevant <- gsub("^(Re|Im)([[:digit:]]{2})_.*", "\\2", colnames(dataset)) %in%
-    c("DeltaAmplitude", "S", "BYmin", usable)
-  dataset_matrix <- as.matrix(dataset[, relevant])
-  dataset_matrix[is.na(dataset_matrix)] <- 0
+  dataset_matrix <- dataset %>%
+    select_(
+      ~-Spectrogram, ~-Fingerprint, ~-Species, ~-Type, ~-Combination, ~-Set
+    ) %>%
+    as.matrix()
   models <- lapply(
     seq_len(n.fold),
     function(i){

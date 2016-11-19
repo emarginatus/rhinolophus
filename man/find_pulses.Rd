@@ -4,13 +4,10 @@
 \alias{find_pulses}
 \title{Find the location of possible pulses in a spectrogram}
 \usage{
-find_pulses(spectrogram, min.peak = 40, min.amplitude = 10,
-  delta.amplitude = 10)
+find_pulses(spectrogram, min.amplitude = 10, delta.amplitude = 10)
 }
 \arguments{
 \item{spectrogram}{The spectrogram}
-
-\item{min.peak}{Take only pulses into account with a maximum amplitude of at least min.peak}
 
 \item{min.amplitude}{The minimum amplitude of the pulse}
 

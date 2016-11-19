@@ -4,12 +4,10 @@
 \alias{prepare_analysis}
 \title{Prepare all pulse parameters for analysis}
 \usage{
-prepare_analysis(path, n.part = 30)
+prepare_analysis(path, n.level = 5)
 }
 \arguments{
 \item{path}{the path of the pulses}
-
-\item{n.part}{the number of Fourier dimensions}
 }
 \description{
 Prepare all pulse parameters for analysis

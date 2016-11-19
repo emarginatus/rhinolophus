@@ -14,3 +14,15 @@ next_power_2 <- function(x){
   }
   2 ^ ceiling(log2(x))
 }
+
+#' Test if a number is a power of 2
+#' @param x the value to test
+#' @export
+#' @importFrom assertthat assert_that is.number "on_failure<-"
+is_power_2 <- function(x){
+  assert_that(is.number(x))
+  log2(x) %% 1 < 1e-8
+}
+on_failure(is_power_2) <- function(call, env){
+  paste0(deparse(call$x), " is not a power of 2")
+}

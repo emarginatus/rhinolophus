@@ -4,16 +4,10 @@
 \alias{reconstruct.pulse}
 \title{reconstruct a pulse}
 \usage{
-reconstruct.pulse(pulses, fingerprint)
+reconstruct.pulse(pulses, fingerprint, plot.it = TRUE)
 }
 \arguments{
-\item{pulse.fft}{The fourier representation of the pulse}
-
-\item{local.time}{Should the pulse be centered (TRUE) or display the original timing (FALSE)}
-
-\item{plot.it}{Should the reconstructed pulse be plotted?}
-
-\item{asp}{The aspect ratio}
+\item{pulses}{The fourier representation of the pulse}
 }
 \description{
 reconstruct a pulse

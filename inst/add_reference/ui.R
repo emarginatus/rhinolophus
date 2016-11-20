@@ -9,11 +9,19 @@ shinyUI(fluidPage(
       textInput(
         "path",
         label = "Path",
-        value = "/media/thierry_onkelinx/CE74C8F474C8E077/vleermuizen/opnames/kesterbeek"
+        value = "/media/thierry_onkelinx/CE74C8F474C8E077/vleermuizen/opnames"
       ),
       actionButton(
         inputId = "new.path",
         label = "Read files"
+      ),
+      radioButtons(
+        inputId = "plot_type",
+        label = "Select the image type",
+        choices = c("spectrogram", "pulse"),
+        selected = "spectrogram",
+        inline = TRUE,
+        width = "50%"
       ),
       radioButtons(
         inputId = "species",

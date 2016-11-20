@@ -99,23 +99,38 @@ shinyServer(function(input, output, session) {
     if (is.null(v$pulses)) {
       return(character(0))
     }
-    plot(
-      v$spectrogram,
-      asp = 0.75,
-      main = v$pulses@Metadata$Filename,
-      breaks = ramp()$Breaks,
-      col = ramp()$Colour,
-      xlim = c(v$this.pulse$BXmin, v$this.pulse$BXmax),
-      ylim = c(v$this.pulse$BYmin, v$this.pulse$BYmax),
-      xlab = "Time (ms)",
-      ylab = "Frequency (kHz)"
-    )
-    lines(v$borders)
-    lines(
-      v$borders[v$borders$Fingerprint == v$this.pulse$Fingerprint, ],
-      col = "yellow",
-      lwd = 2
-    )
+    if (input$plot_type == "spectrogram") {
+      plot(
+        v$spectrogram,
+        asp = 0.75,
+        main = v$pulses@Metadata$Filename,
+        breaks = ramp()$Breaks,
+        col = ramp()$Colour,
+        xlim = c(v$this.pulse$BXmin, v$this.pulse$BXmax),
+        ylim = c(v$this.pulse$BYmin, v$this.pulse$BYmax),
+        xlab = "Time (ms)",
+        ylab = "Frequency (kHz)"
+      )
+      lines(v$borders)
+      lines(
+        v$borders[v$borders$Fingerprint == v$this.pulse$Fingerprint, ],
+        col = "yellow",
+        lwd = 2
+      )
+    } else {
+      raster_pulse <- reconstruct.pulse(
+        pulses = v$pulses,
+        fingerprint = v$this.pulse$Fingerprint,
+        plot.it = FALSE
+      )
+      plot(
+        raster_pulse,
+        asp = 0.75,
+        main = v$pulses@Metadata$Filename,
+        xlab = "Time (ms)",
+        ylab = "Frequency (kHz)"
+      )
+    }
     points(
       v$this.pulse$Xpeak,
       v$this.pulse$Ypeak,

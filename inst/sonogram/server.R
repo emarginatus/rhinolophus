@@ -26,12 +26,12 @@ shinyServer(function(input, output) {
   output$sonogram <- renderPlot({
     plot(
       clamp(sonor(), lower = 10),
-      asp = 10,
+      asp = 1,
       col = topo.colors(100),
       xlim = c(0, 500),
-      ylim = c(40, 60),
-      xlab = "tims (ms)",
-      ylab = "frequency (kKz)"
+      ylim = input$frequency,
+      xlab = "time (ms)",
+      ylab = "frequency (kHz)"
     )
   })
 })

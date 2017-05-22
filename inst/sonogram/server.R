@@ -6,6 +6,10 @@ shinyServer(function(input, output, session) {
   filename <- eventReactive(
     input$update_path,
     {
+      updateSliderInput(session, "starttime", value = 0)
+      updateSliderInput(session, "timeinterval", value = 200)
+      updateSliderInput(session, "amplitude", value = c(0, 50))
+      updateSliderInput(session, "frequence", value = c(0, 150))
       list.files(
         path = input$path,
         pattern = "\\.wav$",

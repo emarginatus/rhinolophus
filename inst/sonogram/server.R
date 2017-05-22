@@ -31,7 +31,7 @@ shinyServer(function(input, output) {
       clamp(sonor(), lower = input$amplitude),
       asp = 1,
       col = topo.colors(100),
-      xlim = c(0, 500),
+      xlim = input$starttime + c(0, input$timeinterval),
       ylim = input$frequency,
       xlab = "time (ms)",
       ylab = "frequency (kHz)",

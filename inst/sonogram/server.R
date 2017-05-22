@@ -2,7 +2,7 @@ library(shiny)
 library(dplyr)
 library(rhinolophus)
 library(raster)
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   filename <- eventReactive(
     input$update_path,
     {
@@ -28,6 +28,12 @@ shinyServer(function(input, output) {
       ymx = max(sonogram$f)
     )
   })
+
+  observeEvent(input$step_forward,
+    {
+      updateSliderInput(session, "starttime", value = input$starttime + input$timeinterval)
+    }
+  )
 
   output$sonogram <- renderPlot({
     plot(

@@ -7,7 +7,6 @@ shinyServer(function(input, output, session) {
     input$update_path,
     {
       updateSliderInput(session, "timeinterval", value = 200)
-      updateSliderInput(session, "frequence", value = c(0, 150))
       list.files(
         path = input$path,
         pattern = "\\.wav$",
@@ -35,6 +34,14 @@ shinyServer(function(input, output, session) {
       value = c(0, max(amplitude_range)),
       min = min(amplitude_range),
       max = max(amplitude_range)
+    )
+    frequency_range <- pretty(range(sonogram$f), 10)
+    updateSliderInput(
+      session,
+      "frequency",
+      value = c(0, pmin(140, max(frequency_range))),
+      min = min(frequency_range),
+      max = max(frequency_range)
     )
     raster(
       sonogram$S[rev(seq_along(sonogram$f)), ],

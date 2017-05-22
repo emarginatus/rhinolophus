@@ -6,7 +6,6 @@ shinyServer(function(input, output, session) {
   filename <- eventReactive(
     input$update_path,
     {
-      updateSliderInput(session, "starttime", value = 0)
       updateSliderInput(session, "timeinterval", value = 200)
       updateSliderInput(session, "amplitude", value = c(0, 50))
       updateSliderInput(session, "frequence", value = c(0, 150))
@@ -24,6 +23,12 @@ shinyServer(function(input, output, session) {
       wav2spectrogram()
     sonogram$f <- sonogram$f / 1000
     sonogram$t <- sonogram$t * 1000
+    updateSliderInput(
+      session,
+      "starttime",
+      value = 0,
+      max = input$timeinterval * (max(sonogram$t) %/% input$timeinterval)
+    )
     raster(
       sonogram$S[rev(seq_along(sonogram$f)), ],
       xmn = min(sonogram$t),

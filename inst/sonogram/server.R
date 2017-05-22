@@ -28,7 +28,7 @@ shinyServer(function(input, output) {
 
   output$sonogram <- renderPlot({
     plot(
-      clamp(sonor(), lower = 10),
+      clamp(sonor(), lower = input$amplitude),
       asp = 1,
       col = topo.colors(100),
       xlim = c(0, 500),

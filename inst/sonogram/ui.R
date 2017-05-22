@@ -20,12 +20,18 @@ shinyUI(fluidPage(
         value = c(20, 60),
         min = 0,
         max = 150
+      ),
+      sliderInput(
+        "amplitude",
+        label = "min amplitude (dB)",
+        value = 10,
+        min = -50,
+        max = 50
       )
     ),
 
-    # Show a plot of the generated distribution
     mainPanel(
-       plotOutput("sonogram", height = "800px")
+       plotOutput("sonogram", height = "900px")
     )
   )
 ))

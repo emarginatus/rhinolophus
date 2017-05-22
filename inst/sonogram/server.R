@@ -3,14 +3,17 @@ library(dplyr)
 library(rhinolophus)
 library(raster)
 shinyServer(function(input, output) {
-  sonor <- reactive({
-    sonogram <- list.files(
+  filename <- reactive({
+    list.files(
       path = input$path,
       pattern = "\\.wav$",
       ignore.case = TRUE,
       full.names = TRUE
-    )[1] %>%
-      read_wav(channel = "left", te.factor = 1) %>%
+    )[1]
+  })
+
+  sonor <- reactive({
+    sonogram <- read_wav(filename(), channel = "left", te.factor = 1) %>%
       wav2spectrogram()
     sonogram$f <- sonogram$f / 1000
     sonogram$t <- sonogram$t * 1000
@@ -31,7 +34,8 @@ shinyServer(function(input, output) {
       xlim = c(0, 500),
       ylim = input$frequency,
       xlab = "time (ms)",
-      ylab = "frequency (kHz)"
+      ylab = "frequency (kHz)",
+      main = filename()
     )
   })
 })

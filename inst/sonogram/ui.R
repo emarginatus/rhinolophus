@@ -16,6 +16,7 @@ shinyUI(fluidPage(
         value = "."
       ),
       actionButton("update_path", label = "load file"),
+      actionButton("step_backward", label = "<<<"),
       actionButton("step_forward", label = ">>>"),
       sliderInput(
         "frequency",

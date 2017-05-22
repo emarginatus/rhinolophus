@@ -29,10 +29,22 @@ shinyServer(function(input, output, session) {
     )
   })
 
-  observeEvent(input$step_forward,
-    {
-      updateSliderInput(session, "starttime", value = input$starttime + input$timeinterval)
-    }
+  observeEvent(
+    input$step_backward,
+    updateSliderInput(
+      session,
+      "starttime",
+      value = input$starttime - input$timeinterval
+    )
+  )
+
+  observeEvent(
+    input$step_forward,
+    updateSliderInput(
+      session,
+      "starttime",
+      value = input$starttime + input$timeinterval
+    )
   )
 
   output$sonogram <- renderPlot({

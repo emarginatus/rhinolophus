@@ -25,7 +25,8 @@ shinyServer(function(input, output, session) {
       session,
       "starttime",
       value = 0,
-      max = input$timeinterval * (max(sonogram$t) %/% input$timeinterval)
+      max = input$timeinterval * (max(sonogram$t) %/% input$timeinterval),
+      step = input$timeinterval
     )
     amplitude_range <- pretty(range(sonogram$S), 10)
     updateSliderInput(

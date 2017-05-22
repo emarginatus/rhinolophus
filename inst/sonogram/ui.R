@@ -30,7 +30,8 @@ shinyUI(fluidPage(
         label = "start time (ms)",
         value = 0,
         min = 0,
-        max = 10000
+        max = 10000,
+        animate = animationOptions(interval = 500)
       ),
       sliderInput(
         "timeinterval",

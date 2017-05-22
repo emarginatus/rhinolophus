@@ -37,5 +37,7 @@ shinyServer(function(input, output) {
       ylab = "frequency (kHz)",
       main = filename()
     )
+    abline(h = c(20, 30, 40, 50, 60, 80, 90, 110), lty = 2)
+    abline(h = c(18, 21, 27, 35), lty = 3)
   })
 })

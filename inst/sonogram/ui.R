@@ -39,7 +39,7 @@ shinyUI(fluidPage(
       sliderInput(
         "amplitude",
         label = "min amplitude (dB)",
-        value = 10,
+        value = 0,
         min = -50,
         max = 50
       )

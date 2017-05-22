@@ -30,7 +30,7 @@ shinyUI(fluidPage(
         label = "start time (ms)",
         value = 0,
         min = 0,
-        max = 5000
+        max = 10000
       ),
       sliderInput(
         "timeinterval",
@@ -41,10 +41,10 @@ shinyUI(fluidPage(
       ),
       sliderInput(
         "amplitude",
-        label = "min amplitude (dB)",
-        value = 0,
+        label = "amplitude (dB)",
+        value = c(0, 50),
         min = -50,
-        max = 50
+        max = 100
       )
     ),
 

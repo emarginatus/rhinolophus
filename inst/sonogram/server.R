@@ -3,14 +3,17 @@ library(dplyr)
 library(rhinolophus)
 library(raster)
 shinyServer(function(input, output) {
-  filename <- reactive({
-    list.files(
-      path = input$path,
-      pattern = "\\.wav$",
-      ignore.case = TRUE,
-      full.names = TRUE
-    )[1]
-  })
+  filename <- eventReactive(
+    input$update_path,
+    {
+      list.files(
+        path = input$path,
+        pattern = "\\.wav$",
+        ignore.case = TRUE,
+        full.names = TRUE
+      )[1]
+    }
+  )
 
   sonor <- reactive({
     sonogram <- read_wav(filename(), channel = "left", te.factor = 1) %>%

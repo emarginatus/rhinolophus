@@ -15,6 +15,7 @@ shinyUI(fluidPage(
         label = "path",
         value = "."
       ),
+      actionButton("update_path", label = "load file"),
       sliderInput(
         "frequency",
         label = "frequency (kHz)",

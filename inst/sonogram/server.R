@@ -113,12 +113,19 @@ shinyServer(function(input, output, session) {
       if (length(input$species) == 0) {
         return(NULL)
       }
+      subdir <- sprintf(
+        "%s/%s",
+        dirname(data$filename),
+        paste(input$species, collapse = "_")
+      )
+      if (!file_test("-d", subdir)) {
+        dir.create(subdir)
+      }
       file.rename(
         data$filename,
         sprintf(
-          "%s/%s/%s",
-          dirname(data$filename),
-          paste(input$species, collapse = "_"),
+          "%s/%s",
+          subdir,
           basename(data$filename)
         )
       )

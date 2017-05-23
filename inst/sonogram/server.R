@@ -3,11 +3,16 @@ library(dplyr)
 library(rhinolophus)
 library(raster)
 shinyServer(function(input, output, session) {
-  filename <- eventReactive(
+  data <- reactiveValues(
+    filename = character(0),
+    species = character(0)
+  )
+
+  observeEvent(
     input$update_path,
     {
       updateSliderInput(session, "timeinterval", value = 200)
-      list.files(
+      data$filename <- list.files(
         path = input$path,
         pattern = "\\.wav$",
         ignore.case = TRUE,
@@ -17,7 +22,10 @@ shinyServer(function(input, output, session) {
   )
 
   sonor <- reactive({
-    sonogram <- read_wav(filename(), channel = "left", te.factor = 1) %>%
+    if (length(data$filename) == 0) {
+      return(NULL)
+    }
+    sonogram <- read_wav(data$filename, channel = "left", te.factor = 1) %>%
       wav2spectrogram()
     sonogram$f <- sonogram$f / 1000
     sonogram$t <- sonogram$t * 1000
@@ -72,6 +80,9 @@ shinyServer(function(input, output, session) {
   )
 
   output$sonogram <- renderPlot({
+    if (is.null(sonor())) {
+      return(NULL)
+    }
     breaks <- pretty(input$amplitude[1]:input$amplitude[2], 20)
     plot(
       clamp(sonor(), lower = input$amplitude[1], upper = input$amplitude[2]),
@@ -82,21 +93,43 @@ shinyServer(function(input, output, session) {
       ylim = input$frequency,
       xlab = "time (ms)",
       ylab = "frequency (kHz)",
-      main = filename()
+      main = data$filename
     )
     abline(h = c(20, 30, 40, 50, 60, 80, 90, 110), lty = 2)
     abline(h = c(18, 21, 27, 35), lty = 3)
   })
 
-  species <- reactiveValues(names = character(0))
-
   observeEvent(
     input$add_species,
     {
-      species$names <- sort(unique(c(species$names, input$new_species)))
-      updateCheckboxGroupInput(session, "species", choices = species$names)
+      data$species <- sort(unique(c(data$species, input$new_species)))
+      updateCheckboxGroupInput(session, "species", choices = data$species)
     }
   )
 
-
+  observeEvent(
+    input$move_file,
+    {
+      if (length(input$species) == 0) {
+        return(NULL)
+      }
+      file.rename(
+        data$filename,
+        sprintf(
+          "%s/%s/%s",
+          dirname(data$filename),
+          paste(input$species, collapse = "_"),
+          basename(data$filename)
+        )
+      )
+      updateSliderInput(session, "timeinterval", value = 200)
+      data$filename <- list.files(
+        path = input$path,
+        pattern = "\\.wav$",
+        ignore.case = TRUE,
+        full.names = TRUE
+      )[1]
+      updateCheckboxGroupInput(session, "species", choices = data$species, selected = NULL)
+    }
+  )
 })

@@ -46,7 +46,10 @@ shinyUI(fluidPage(
         value = c(0, 50),
         min = -50,
         max = 100
-      )
+      ),
+      checkboxGroupInput("species", label = "species", inline = TRUE),
+      textInput("new_species", label = "new species"),
+      actionButton("add_species", label = "add new species")
     ),
 
     mainPanel(

@@ -26,14 +26,6 @@ shinyUI(fluidPage(
         max = 150
       ),
       sliderInput(
-        "starttime",
-        label = "start time (ms)",
-        value = 0,
-        min = 0,
-        max = 10000,
-        animate = animationOptions(interval = 500)
-      ),
-      sliderInput(
         "timeinterval",
         label = "interval (ms)",
         value = 200,
@@ -51,6 +43,14 @@ shinyUI(fluidPage(
         "channel",
         label = "channel + TE factor",
         choices = c("left, TE = 1", "right, TE = 10")
+      ),
+      sliderInput(
+        "starttime",
+        label = "start time (ms)",
+        value = 0,
+        min = 0,
+        max = 10000,
+        animate = animationOptions(interval = 500)
       ),
       actionButton("move_file", label = "move file"),
       checkboxGroupInput("species", label = "species", inline = TRUE),

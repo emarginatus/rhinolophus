@@ -25,7 +25,11 @@ shinyServer(function(input, output, session) {
     if (length(data$filename) == 0) {
       return(NULL)
     }
-    sonogram <- read_wav(data$filename, channel = input$channel, te.factor = 1) %>%
+    sonogram <- read_wav(
+      data$filename,
+      channel = gsub(",.*$", "", input$channel),
+      te.factor = as.integer(gsub("^.*, TE = ", "", input$channel))
+    ) %>%
       wav2spectrogram()
     sonogram$f <- sonogram$f / 1000
     sonogram$t <- sonogram$t * 1000

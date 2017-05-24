@@ -17,7 +17,8 @@ shinyServer(function(input, output, session) {
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE
-      )[1]
+      ) %>%
+        sample(1)
     }
   )
 
@@ -139,7 +140,8 @@ shinyServer(function(input, output, session) {
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE
-      )[1]
+      ) %>%
+        sample(1)
       updateCheckboxGroupInput(session, "species", choices = data$species, selected = NULL)
     }
   )

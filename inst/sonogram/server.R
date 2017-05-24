@@ -100,8 +100,13 @@ shinyServer(function(input, output, session) {
       ylab = "frequency (kHz)",
       main = data$filename
     )
-    abline(h = c(20, 30, 40, 50, 60, 80, 90, 110), lty = 2)
-    abline(h = c(18, 21, 27, 35), lty = 3)
+    abline(
+      h = c(20, 30, 40, 50, 60, 80, 90, 110),
+      lty = 2,
+      col = "white",
+      lwd = 2
+    )
+    abline(h = c(18, 21, 27, 35), lty = 3, col = "white", lwd = 2)
   })
 
   observeEvent(

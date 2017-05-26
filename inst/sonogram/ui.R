@@ -47,7 +47,7 @@ shinyUI(fluidPage(
         value = 0,
         min = 0,
         max = 10000,
-        animate = animationOptions(interval = 500)
+        animate = animationOptions(interval = 1000)
       ),
       actionButton("move_file", label = "move file"),
       checkboxGroupInput("species", label = "species", inline = TRUE),

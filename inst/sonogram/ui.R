@@ -26,6 +26,7 @@ shinyUI(fluidPage(
         "timeinterval",
         label = "interval (ms)",
         value = 200,
+        step = 50,
         min = 50,
         max = 1000
       ),

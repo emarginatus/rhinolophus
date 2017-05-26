@@ -6,6 +6,7 @@ library(raster)
 
 shinyServer(function(input, output, session) {
   data <- reactiveValues(
+    n_todo = integer(0),
     filename = character(0),
     species = character(0)
   )
@@ -14,7 +15,8 @@ shinyServer(function(input, output, session) {
   shinyDirChoose(
     input,
     "path",
-    roots = roots
+    roots = roots,
+    filetypes = c("wav", "WAV")
   )
 
   observeEvent(
@@ -32,13 +34,18 @@ shinyServer(function(input, output, session) {
         sort()
       updateCheckboxGroupInput(session, "species", choices = data$species)
       updateSliderInput(session, "timeinterval", value = 200)
-      data$filename <- list.files(
+      todo <- list.files(
         path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE
-      ) %>%
-        sample(1)
+      )
+      data$n_todo <- length(todo)
+      if (data$n_todo > 0) {
+        data$filename <- sample(todo, 1)
+      } else {
+        data$filename <- character(0)
+      }
     }
   )
 
@@ -118,7 +125,7 @@ shinyServer(function(input, output, session) {
       ylim = input$frequency,
       xlab = "time (ms)",
       ylab = "frequency (kHz)",
-      main = data$filename
+      main = sprintf("%s\nremaining: %i files", data$filename, data$n_todo - 1)
     )
     abline(
       h = c(20, 30, 40, 50, 60, 80, 90, 110),
@@ -160,13 +167,18 @@ shinyServer(function(input, output, session) {
         )
       )
       updateSliderInput(session, "timeinterval", value = 200)
-      data$filename <- list.files(
+      todo <- list.files(
         path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE
-      ) %>%
-        sample(1)
+      )
+      data$n_todo <- length(todo)
+      if (data$n_todo > 0) {
+        data$filename <- sample(todo, 1)
+      } else {
+        data$filename <- character(0)
+      }
       updateCheckboxGroupInput(session, "species", choices = data$species, selected = NULL)
     }
   )

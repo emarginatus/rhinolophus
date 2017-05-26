@@ -20,6 +20,17 @@ shinyServer(function(input, output, session) {
   observeEvent(
     input$path,
     {
+      data$species <- list.dirs(
+        path = parseDirPath(roots, input$path),
+        full.names = FALSE,
+        recursive = FALSE
+      ) %>%
+        strsplit("_") %>%
+        unlist() %>%
+        c(data$species) %>%
+        unique() %>%
+        sort()
+      updateCheckboxGroupInput(session, "species", choices = data$species)
       updateSliderInput(session, "timeinterval", value = 200)
       data$filename <- list.files(
         path = parseDirPath(roots, input$path),

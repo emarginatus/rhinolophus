@@ -1,21 +1,18 @@
 library(shiny)
+library(shinyFiles)
 
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
 
-  # Application title
   titlePanel("Sonogram"),
 
-  # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
       width = 2,
-      textInput(
+      shinyDirButton(
         "path",
-        label = "path",
-        value = "."
+        label = "select directory",
+        title = "path"
       ),
-      actionButton("update_path", label = "load file"),
       actionButton("step_backward", label = "<<<"),
       actionButton("step_forward", label = ">>>"),
       sliderInput(

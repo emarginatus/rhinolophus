@@ -1,19 +1,28 @@
 library(shiny)
+library(shinyFiles)
 library(dplyr)
 library(rhinolophus)
 library(raster)
+
 shinyServer(function(input, output, session) {
   data <- reactiveValues(
     filename = character(0),
     species = character(0)
   )
 
+  roots <- c(working = ".", home = "~", root = "/")
+  shinyDirChoose(
+    input,
+    "path",
+    roots = roots
+  )
+
   observeEvent(
-    input$update_path,
+    input$path,
     {
       updateSliderInput(session, "timeinterval", value = 200)
       data$filename <- list.files(
-        path = input$path,
+        path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE
@@ -141,7 +150,7 @@ shinyServer(function(input, output, session) {
       )
       updateSliderInput(session, "timeinterval", value = 200)
       data$filename <- list.files(
-        path = input$path,
+        path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
         ignore.case = TRUE,
         full.names = TRUE

@@ -118,7 +118,7 @@ shinyServer(function(input, output, session) {
     breaks <- pretty(input$amplitude[1]:input$amplitude[2], 20)
     plot(
       clamp(sonor(), lower = input$amplitude[1], upper = input$amplitude[2]),
-      asp = 1,
+      asp = input$aspect,
       breaks = breaks,
       col = topo.colors(length(breaks)),
       xlim = input$starttime + c(0, input$timeinterval),

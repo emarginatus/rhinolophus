@@ -42,6 +42,12 @@ shinyUI(fluidPage(
         label = "channel + TE factor",
         choices = c("left, TE = 1", "right, TE = 10")
       ),
+      selectInput(
+        "aspect",
+        label = "aspect ratio",
+        choices = c("1/4" = 0.25, "1/2" = 0.5, "1" = 1, "2" = 2),
+        selected = 1
+      ),
       sliderInput(
         "starttime",
         label = "start time (ms)",

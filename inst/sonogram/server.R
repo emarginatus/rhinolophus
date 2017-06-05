@@ -33,7 +33,7 @@ shinyServer(function(input, output, session) {
         unique() %>%
         sort()
       updateCheckboxGroupInput(session, "species", choices = data$species)
-      updateSliderInput(session, "timeinterval", value = 200)
+      updateSelectInput(session, "aspect", selected = 1)
       todo <- list.files(
         path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
@@ -137,6 +137,13 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(
+    input$aspect,
+    {
+      updateSliderInput(session, "timeinterval", value = 200 * as.numeric(input$aspect))
+    }
+  )
+
+  observeEvent(
     input$add_species,
     {
       data$species <- sort(unique(c(data$species, input$new_species)))
@@ -166,7 +173,7 @@ shinyServer(function(input, output, session) {
           basename(data$filename)
         )
       )
-      updateSliderInput(session, "timeinterval", value = 200)
+      updateSelectInput(session, "aspect", selected = 1)
       todo <- list.files(
         path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",

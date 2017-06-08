@@ -36,7 +36,6 @@ shinyServer(function(input, output, session) {
         c(data$species) %>%
         unique() %>%
         sort()
-      updateCheckboxGroupInput(session, "species", choices = data$species)
       updateSelectInput(session, "aspect", selected = 1)
       updateCheckboxInput(session, "check", value = FALSE)
       todo <- list.files(
@@ -152,14 +151,45 @@ shinyServer(function(input, output, session) {
     input$add_species,
     {
       data$species <- sort(unique(c(data$species, input$new_species)))
-      updateCheckboxGroupInput(session, "species", choices = data$species)
     }
   )
+
+  output$species <- renderUI({
+    lapply(
+      data$species,
+      function(species_name){
+        numericInput(
+          species_name,
+          label = species_name,
+          value = 0,
+          min = 0,
+          max = 9,
+          step = 1,
+        )
+      }
+    ) %>%
+      tagList()
+  })
 
   observeEvent(
     input$move_file,
     {
-      if (length(input$species) == 0) {
+      if (length(data$species) == 0) {
+        return(NULL)
+      }
+      species_names <- sapply(
+        data$species,
+        function(species_name){
+          if (input[[species_name]] > 0) {
+            updateNumericInput(session, species_name, value = 0)
+            sprintf("%s-%i", species_name, input[[species_name]])
+          } else {
+            ""
+          }
+        }
+      )
+      species_names <- paste(species_names[species_names != ""], collapse = "_")
+      if (nchar(species_names) == 0) {
         return(NULL)
       }
       if (input$check) {
@@ -175,7 +205,7 @@ shinyServer(function(input, output, session) {
         sprintf(
           "%s/%sµ%s",
           subdir,
-          paste(input$species, collapse = "_"),
+          species_names,
           basename(data$filename)
         )
       )
@@ -192,7 +222,6 @@ shinyServer(function(input, output, session) {
       } else {
         data$filename <- character(0)
       }
-      updateCheckboxGroupInput(session, "species", choices = data$species, selected = NULL)
       updateCheckboxInput(session, "check", value = FALSE)
     }
   )

@@ -58,7 +58,7 @@ shinyUI(fluidPage(
       ),
       actionButton("move_file", label = "move file"),
       checkboxInput("check", label = "to check", value = FALSE),
-      checkboxGroupInput("species", label = "species", inline = TRUE),
+      uiOutput("species"),
       textInput("new_species", label = "new species"),
       actionButton("add_species", label = "add new species")
     ),

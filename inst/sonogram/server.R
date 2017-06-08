@@ -203,9 +203,12 @@ shinyServer(function(input, output, session) {
       file.rename(
         data$filename,
         sprintf(
-          "%s/%sµ%s",
+          "%s/%sµ%s%iµ%s",
           subdir,
           species_names,
+          gsub(",.*$", "", input$channel) %>%
+            strtrim(1),
+          as.integer(gsub("^.*, TE = ", "", input$channel)),
           basename(data$filename)
         )
       )

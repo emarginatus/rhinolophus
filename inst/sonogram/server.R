@@ -22,13 +22,17 @@ shinyServer(function(input, output, session) {
   observeEvent(
     input$path,
     {
-      data$species <- list.dirs(
-        path = parseDirPath(roots, input$path),
-        full.names = FALSE,
-        recursive = FALSE
-      ) %>%
+      data$species <- parseDirPath(roots, input$path) %>%
+        list.files(
+          pattern = ".*µ.*\\.wav",
+          ignore.case = TRUE,
+          recursive = TRUE
+        ) %>%
+        basename() %>%
+        gsub(pattern = "µ.*$", replacement = "") %>%
         strsplit("_") %>%
         unlist() %>%
+        gsub(pattern = "-[[:digit:]]*", replacement = "") %>%
         c(data$species) %>%
         unique() %>%
         sort()

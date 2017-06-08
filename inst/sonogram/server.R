@@ -34,6 +34,7 @@ shinyServer(function(input, output, session) {
         sort()
       updateCheckboxGroupInput(session, "species", choices = data$species)
       updateSelectInput(session, "aspect", selected = 1)
+      updateCheckboxInput(session, "check", value = FALSE)
       todo <- list.files(
         path = parseDirPath(roots, input$path),
         pattern = "\\.wav$",
@@ -157,19 +158,20 @@ shinyServer(function(input, output, session) {
       if (length(input$species) == 0) {
         return(NULL)
       }
-      subdir <- sprintf(
-        "%s/%s",
-        dirname(data$filename),
-        paste(input$species, collapse = "_")
-      )
+      if (input$check) {
+        subdir <- sprintf("%s/check", dirname(data$filename))
+      } else {
+        subdir <- sprintf("%s/done", dirname(data$filename))
+      }
       if (!file_test("-d", subdir)) {
         dir.create(subdir)
       }
       file.rename(
         data$filename,
         sprintf(
-          "%s/%s",
+          "%s/%sµ%s",
           subdir,
+          paste(input$species, collapse = "_"),
           basename(data$filename)
         )
       )
@@ -187,6 +189,7 @@ shinyServer(function(input, output, session) {
         data$filename <- character(0)
       }
       updateCheckboxGroupInput(session, "species", choices = data$species, selected = NULL)
+      updateCheckboxInput(session, "check", value = FALSE)
     }
   )
 })

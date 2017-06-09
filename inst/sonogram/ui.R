@@ -16,6 +16,19 @@ shinyUI(fluidPage(
       actionButton("step_backward", label = "<<<"),
       actionButton("step_forward", label = ">>>"),
       sliderInput(
+        "starttime",
+        label = "start time (ms)",
+        value = 0,
+        min = 0,
+        max = 10000,
+        animate = animationOptions(interval = 1000)
+      ),
+      actionButton("move_file", label = "move file"),
+      checkboxInput("check", label = "to check", value = FALSE),
+      uiOutput("species"),
+      textInput("new_species", label = "new species"),
+      actionButton("add_species", label = "add new species"),
+      sliderInput(
         "frequency",
         label = "frequency (kHz)",
         value = c(0, 150),
@@ -47,20 +60,7 @@ shinyUI(fluidPage(
         label = "aspect ratio",
         choices = c("1/4" = 0.25, "1/2" = 0.5, "1" = 1, "2" = 2),
         selected = 1
-      ),
-      sliderInput(
-        "starttime",
-        label = "start time (ms)",
-        value = 0,
-        min = 0,
-        max = 10000,
-        animate = animationOptions(interval = 1000)
-      ),
-      actionButton("move_file", label = "move file"),
-      checkboxInput("check", label = "to check", value = FALSE),
-      uiOutput("species"),
-      textInput("new_species", label = "new species"),
-      actionButton("add_species", label = "add new species")
+      )
     ),
 
     mainPanel(

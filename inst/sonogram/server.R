@@ -11,7 +11,7 @@ shinyServer(function(input, output, session) {
     species = character(0)
   )
 
-  roots <- c(home = "~", root = "/")
+  roots <- c(root = "/")
   shinyDirChoose(
     input,
     "path",

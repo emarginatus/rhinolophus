@@ -1,6 +1,6 @@
 #' get the species information of all recordings in a directory
 #' @export
-#' @importFrom dplyr data_frame %>% mutate_ select_
+#' @importFrom dplyr data_frame %>% mutate_ select_ arrange_
 #' @importFrom tidyr extract_ unnest_ spread_
 get_species <- function(path, write_csv = TRUE) {
   species <- data_frame(
@@ -35,17 +35,16 @@ get_species <- function(path, write_csv = TRUE) {
       convert = TRUE
     ) %>%
     select_(
-      ~path, ~original, ~filename, ~channel, time_expansion = ~tmp, ~timestamp,
-      ~species, ~count
+      ~path, ~original, ~filename, ~channel, ~timestamp, ~species, ~count
     ) %>%
-    spread_("species", "count", fill = 0) %>%
+    spread_(key_col = "species", value_col = "count", fill = 0) %>%
     mutate_(
       time_expansion = ~gsub("[[:alpha:]]*", "", channel) %>%
         as.integer(),
       channel = ~gsub("[[:digit:]]*", "", channel) %>%
         as.factor()
     ) %>%
-    arrange_(~timestamp)
+    arrange_(~rev(timestamp))
   if (write_csv) {
     as.data.frame(species) %>%
     write.csv2(

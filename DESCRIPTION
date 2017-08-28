@@ -21,4 +21,7 @@ Depends:
     raster
 Suggests:
     testthat,
+    shiny,
+    shinyFiles,
     igraph
+RoxygenNote: 6.0.1
